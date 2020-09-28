@@ -20,6 +20,7 @@ client/build
 .env.production.local
 
 server/.env
+server/node_modules
 client/node_modules
 
 npm-debug.log*
