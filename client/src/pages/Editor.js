@@ -37,36 +37,44 @@ function Editor() {
             kinetic: {
               name: "",
               icon: destinyLogo,
+              itemHash: null,
             },
             special: {
               name: "",
               icon: destinyLogo,
+              itemHash: null,
             },
             power: {
               name: "",
               icon: destinyLogo,
+              itemHash: null,
             },
           },
           armor: {
             helmet: {
               name: "",
               icon: destinyLogo,
+              itemHash: null,
             },
             gloves: {
               name: "",
               icon: destinyLogo,
+              itemHash: null,
             },
             chest: {
               name: "",
               icon: destinyLogo,
+              itemHash: null,
             },
             boots: {
               name: "",
               icon: destinyLogo,
+              itemHash: null,
             },
             classItem: {
               name: "",
               icon: destinyLogo,
+              itemHash: null,
             },
           },
         }
@@ -81,15 +89,18 @@ function Editor() {
   const [showItemSearch, setShowItemSearch] = useState(false);
   const [itemToChange, setItemToChange] = useState("");
   const [itemToSearch, setItemToSearch] = useState("");
-  const [manifest, setManifest] = useState("");
+  const [manifest, setManifest] = useState({});
 
   // Load destiny 2 manifest
   async function getManifest() {
     const data = await getDestinyManifest();
-    setManifest(data);
-  }
+    const manifestUrl = data.Response.jsonWorldContentPaths.en;
 
-  console.log(manifest);
+    const manifestJson = await (
+      await fetch(`https://www.bungie.net${manifestUrl}`)
+    ).json();
+    setManifest(manifestJson);
+  }
 
   // Handle state changes for the form inputs
   function handleChange(e) {
@@ -163,6 +174,12 @@ function Editor() {
     }
     setBuildToSave({ ...buildToSave, stats: newStats });
   }
+
+  function testLookup(itemHash) {
+    console.log(manifest.DestinyInventoryItemDefinition[itemHash]);
+  }
+
+  console.log(manifest);
 
   return (
     <>
@@ -275,6 +292,11 @@ function Editor() {
         ) : (
           <button onClick={() => saveBuild(buildToSave)}>Save Build</button>
         )}
+        <button
+          onClick={() => testLookup(buildToSave.weapons.kinetic.itemHash)}
+        >
+          Test
+        </button>
       </div>
       {showClassPicker
         ? createPortal(

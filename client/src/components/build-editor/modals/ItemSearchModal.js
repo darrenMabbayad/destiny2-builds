@@ -25,6 +25,7 @@ function ItemSearchModal({
     const selectedItem = {
       name: item.displayProperties.name,
       icon: `http://www.bungie.net/${item.displayProperties.icon}`,
+      itemHash: item.hash,
     };
     changeItem(e, selectedItem, itemToChange);
     closeModal(e);

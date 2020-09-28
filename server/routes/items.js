@@ -13,7 +13,6 @@ router.get("/manifest", (req, res) => {
       "x-api-key": process.env.BUNGIE_API_KEY,
     },
   }).then(response => {
-    console.log(response);
     res.send(response.data);
   });
 });
@@ -27,7 +26,6 @@ router.post("/items", (req, res) => {
       "x-api-key": process.env.BUNGIE_API_KEY,
     },
   }).then(response => {
-    console.log(response);
     res.send(response.data);
   });
 });
