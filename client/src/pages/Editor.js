@@ -7,9 +7,15 @@ import ItemFrame from "../components/build-editor/ItemFrame";
 import FormInput from "../components/build-editor/FormInput";
 import ClassPickerModal from "../components/build-editor/modals/ClassPickerModal";
 import ItemSearchModal from "../components/build-editor/modals/ItemSearchModal";
-import { saveBuild, updateBuild } from "../utils/loadout";
+import {
+  loadout,
+  weapons,
+  armor,
+  stats,
+  saveBuild,
+  updateBuild,
+} from "../utils/loadout";
 import { queryDestinyApi, getDestinyManifest } from "../utils/destiny2";
-import destinyLogo from "../img/destiny-logo.png";
 
 function Editor() {
   // Initialize a build object to save/edit
@@ -17,65 +23,7 @@ function Editor() {
   const buildToEdit =
     location.state !== undefined ? location.state.build : null;
   const [buildToSave, setBuildToSave] = useState(
-    buildToEdit
-      ? buildToEdit
-      : {
-          name: "",
-          description: "",
-          selectedClass: "",
-          stats: {
-            mobility: 50,
-            resilience: 50,
-            recovery: 50,
-            discipline: 50,
-            intellect: 50,
-            strength: 50,
-          },
-          weapons: {
-            kinetic: {
-              name: "",
-              icon: destinyLogo,
-              itemHash: null,
-            },
-            special: {
-              name: "",
-              icon: destinyLogo,
-              itemHash: null,
-            },
-            power: {
-              name: "",
-              icon: destinyLogo,
-              itemHash: null,
-            },
-          },
-          armor: {
-            helmet: {
-              name: "",
-              icon: destinyLogo,
-              itemHash: null,
-            },
-            gloves: {
-              name: "",
-              icon: destinyLogo,
-              itemHash: null,
-            },
-            chest: {
-              name: "",
-              icon: destinyLogo,
-              itemHash: null,
-            },
-            boots: {
-              name: "",
-              icon: destinyLogo,
-              itemHash: null,
-            },
-            classItem: {
-              name: "",
-              icon: destinyLogo,
-              itemHash: null,
-            },
-          },
-        }
+    buildToEdit ? buildToEdit : loadout
   );
 
   useEffect(() => {
@@ -183,87 +131,36 @@ function Editor() {
         <div className="editor-ui">
           <div className="editor-weapons-and-classes">
             <ClassPicker toggleClassPicker={toggleClassPicker} />
-            <ItemFrame
-              itemType="kinetic"
-              img={buildToSave.weapons.kinetic.icon}
-              toggleItemSearch={toggleItemSearch}
-            />
-            <ItemFrame
-              itemType="special"
-              img={buildToSave.weapons.special.icon}
-              toggleItemSearch={toggleItemSearch}
-            />
-            <ItemFrame
-              itemType="power"
-              img={buildToSave.weapons.power.icon}
-              toggleItemSearch={toggleItemSearch}
-            />
+            {weapons.map((weapon, index) => (
+              <ItemFrame
+                key={index}
+                itemType={weapon}
+                img={buildToSave.weapons[weapon].icon}
+                toggleItemSearch={toggleItemSearch}
+              />
+            ))}
           </div>
           <div className="editor-armor-and-stats">
             <div>
-              <CharacterStat
-                icon={statIcons.mobility}
-                label="Mobility"
-                value={buildToSave.stats.mobility}
-                changeStat={changeStat}
-              />
-              <CharacterStat
-                icon={statIcons.resilience}
-                label="Resilience"
-                value={buildToSave.stats.resilience}
-                changeStat={changeStat}
-              />
-              <CharacterStat
-                icon={statIcons.recovery}
-                label="Recovery"
-                value={buildToSave.stats.recovery}
-                changeStat={changeStat}
-              />
-              <CharacterStat
-                icon={statIcons.discipline}
-                label="Discipline"
-                value={buildToSave.stats.discipline}
-                changeStat={changeStat}
-              />
-              <CharacterStat
-                icon={statIcons.intellect}
-                label="Intellect"
-                value={buildToSave.stats.intellect}
-                changeStat={changeStat}
-              />
-              <CharacterStat
-                icon={statIcons.strength}
-                label="Strength"
-                value={buildToSave.stats.strength}
-                changeStat={changeStat}
-              />
+              {stats.map((stat, index) => (
+                <CharacterStat
+                  key={index}
+                  icon={stat.icon}
+                  label={stat.label}
+                  value={buildToSave.stats[stat.type]}
+                  changeStat={changeStat}
+                />
+              ))}
             </div>
             <div>
-              <ItemFrame
-                itemType="helmet"
-                img={buildToSave.armor.helmet.icon}
-                toggleItemSearch={toggleItemSearch}
-              />
-              <ItemFrame
-                itemType="gloves"
-                img={buildToSave.armor.gloves.icon}
-                toggleItemSearch={toggleItemSearch}
-              />
-              <ItemFrame
-                itemType="chest"
-                img={buildToSave.armor.chest.icon}
-                toggleItemSearch={toggleItemSearch}
-              />
-              <ItemFrame
-                itemType="boots"
-                img={buildToSave.armor.boots.icon}
-                toggleItemSearch={toggleItemSearch}
-              />
-              <ItemFrame
-                itemType="classItem"
-                img={buildToSave.armor.classItem.icon}
-                toggleItemSearch={toggleItemSearch}
-              />
+              {armor.map((armor, index) => (
+                <ItemFrame
+                  key={index}
+                  itemType={armor}
+                  img={buildToSave.armor[armor].icon}
+                  toggleItemSearch={toggleItemSearch}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -319,20 +216,5 @@ function Editor() {
     </>
   );
 }
-
-const statIcons = {
-  mobility:
-    "https://www.bungie.net/common/destiny2_content/icons/c9aa8439fc71c9ee336ba713535569ad.png",
-  resilience:
-    "https://www.bungie.net/common/destiny2_content/icons/9f5f65d08b24defb660cebdfd7bae727.png",
-  recovery:
-    "https://www.bungie.net/common/destiny2_content/icons/47e16a27c8387243dcf9b5d94e26ccc4.png",
-  discipline:
-    "https://www.bungie.net/common/destiny2_content/icons/ca62128071dc254fe75891211b98b237.png",
-  intellect:
-    "https://www.bungie.net/common/destiny2_content/icons/59732534ce7060dba681d1ba84c055a6.png",
-  strength:
-    "https://www.bungie.net/common/destiny2_content/icons/c7eefc8abbaa586eeab79e962a79d6ad.png",
-};
 
 export default Editor;
