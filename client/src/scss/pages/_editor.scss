@@ -1,0 +1,29 @@
+@import "../components/build-editor/item-frame";
+@import "../components/build-editor/character-stat";
+@import "../components/build-editor/class-picker";
+@import "../components/build-editor/item-search";
+
+.editor {
+  margin: 0 auto;
+  max-width: 600px;
+
+  &-ui {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &-weapons-and-classes {
+    width: 50%;
+  }
+
+  &-armor-and-stats {
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &-extra-info {
+    display: flex;
+    justify-content: space-between;
+  }
+}

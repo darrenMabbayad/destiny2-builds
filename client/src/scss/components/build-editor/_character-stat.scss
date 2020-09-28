@@ -1,0 +1,42 @@
+.character-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &-label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  &-img {
+    max-width: 100%;
+
+    &-container {
+      width: 35px;
+    }
+  }
+
+  &-name {
+    margin-left: 0.5rem;
+  }
+
+  &-value {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-left: 1.25rem;
+  }
+
+  &-number {
+    margin: 0 0.3rem;
+  }
+
+  &-btn {
+    max-width: 100%;
+
+    &-container {
+      width: 25px;
+    }
+  }
+}

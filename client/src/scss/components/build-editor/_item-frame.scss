@@ -1,0 +1,10 @@
+.item-frame {
+  height: 75px;
+  width: 75px;
+  border: solid black 2px;
+  margin-bottom: 1rem;
+
+  &-img {
+    width: 100%;
+  }
+}
