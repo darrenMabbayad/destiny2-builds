@@ -6,9 +6,9 @@ const queryDestinyApi = async query => {
   return res.data;
 };
 
-const getDestinyManifest = async () => {
+const getManifestUrls = async () => {
   let res = await axios.get("/manifest");
   return res.data;
 };
 
-export { queryDestinyApi, getDestinyManifest };
+export { queryDestinyApi, getManifestUrls };

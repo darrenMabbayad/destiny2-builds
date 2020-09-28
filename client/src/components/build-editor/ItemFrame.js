@@ -1,6 +1,6 @@
 import React from "react";
 
-function ItemFrame({ itemType, img, toggleItemSearch }) {
+function ItemFrame({ itemType, img, toggleItemSearch, toggleItemInfo }) {
   return (
     <div className="item-frame">
       <img
@@ -9,6 +9,8 @@ function ItemFrame({ itemType, img, toggleItemSearch }) {
         src={img}
         alt=""
         onClick={e => toggleItemSearch(e)}
+        onMouseEnter={e => toggleItemInfo(e)}
+        onMouseLeave={e => toggleItemInfo(e)}
       />
     </div>
   );

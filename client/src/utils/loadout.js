@@ -20,44 +20,44 @@ const loadout = {
     kinetic: {
       name: "",
       icon: leviathanIcon,
-      itemHash: null,
+      itemHash: 0,
     },
     special: {
       name: "",
       icon: leviathanIcon,
-      itemHash: null,
+      itemHash: 0,
     },
     power: {
       name: "",
       icon: leviathanIcon,
-      itemHash: null,
+      itemHash: 0,
     },
   },
   armor: {
     helmet: {
       name: "",
       icon: leviathanIcon,
-      itemHash: null,
+      itemHash: 0,
     },
     gloves: {
       name: "",
       icon: leviathanIcon,
-      itemHash: null,
+      itemHash: 0,
     },
     chest: {
       name: "",
       icon: leviathanIcon,
-      itemHash: null,
+      itemHash: 0,
     },
     boots: {
       name: "",
       icon: leviathanIcon,
-      itemHash: null,
+      itemHash: 0,
     },
     classItem: {
       name: "",
       icon: leviathanIcon,
-      itemHash: null,
+      itemHash: 0,
     },
   },
 };

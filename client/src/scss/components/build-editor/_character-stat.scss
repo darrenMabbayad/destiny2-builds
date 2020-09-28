@@ -23,20 +23,23 @@
 
   &-value {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     margin-left: 1.25rem;
   }
 
   &-number {
-    margin: 0 0.3rem;
+    margin: 0 0.25rem;
+    width: 26px;
+    text-align: center;
   }
 
   &-btn {
     max-width: 100%;
+    cursor: pointer;
 
     &-container {
-      width: 25px;
+      width: 10px;
     }
   }
 }

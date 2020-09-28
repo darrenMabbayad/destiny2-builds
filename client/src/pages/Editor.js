@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useContext } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import CharacterStat from "../components/build-editor/CharacterStat";
@@ -7,6 +7,8 @@ import ItemFrame from "../components/build-editor/ItemFrame";
 import FormInput from "../components/build-editor/FormInput";
 import ClassPickerModal from "../components/build-editor/modals/ClassPickerModal";
 import ItemSearchModal from "../components/build-editor/modals/ItemSearchModal";
+import ItemInfoModal from "../components/build-editor/modals/ItemInfoModal";
+import { DestinyContext } from "../context/DestinyContext";
 import {
   loadout,
   weapons,
@@ -15,7 +17,7 @@ import {
   saveBuild,
   updateBuild,
 } from "../utils/loadout";
-import { queryDestinyApi, getDestinyManifest } from "../utils/destiny2";
+import { queryDestinyApi } from "../utils/destiny2";
 
 function Editor() {
   // Initialize a build object to save/edit
@@ -26,27 +28,15 @@ function Editor() {
     buildToEdit ? buildToEdit : loadout
   );
 
-  useEffect(() => {
-    getManifest();
-  }, []);
-
   // State variables for toggling the class picker/item finder
   const [showClassPicker, setShowClassPicker] = useState(false);
   const [showItemSearch, setShowItemSearch] = useState(false);
+  const [showItemInfo, setShowItemInfo] = useState(false);
   const [itemToChange, setItemToChange] = useState("");
   const [itemToSearch, setItemToSearch] = useState("");
-  const [manifest, setManifest] = useState({});
-
-  // Load destiny 2 manifest
-  async function getManifest() {
-    const data = await getDestinyManifest();
-    const manifestUrl = data.Response.jsonWorldContentPaths.en;
-
-    const manifestJson = await (
-      await fetch(`https://www.bungie.net${manifestUrl}`)
-    ).json();
-    setManifest(manifestJson);
-  }
+  const { manifest } = useContext(DestinyContext);
+  const weaponRegex = /(kinetic)|(special)|(power)/;
+  const armorRegex = /(helmet)|(gloves)|(chest)|(boots)|(classItem)/;
 
   // Handle state changes for the form inputs
   function handleChange(e) {
@@ -62,6 +52,7 @@ function Editor() {
 
   function selectClass(e) {
     const { name } = e.target;
+    console.log(e.target);
     if (name === "btn-warlock") {
       setBuildToSave({ ...buildToSave, selectedClass: "Warlock" });
     } else if (name === "btn-hunter") {
@@ -84,6 +75,15 @@ function Editor() {
     if (!showItemSearch) setItemToSearch("");
   }
 
+  function toggleItemInfo(e) {
+    const { id } = e.target;
+    if (weaponRegex.test(id) && buildToSave.weapons[id].itemHash) {
+      displayItemDetails(buildToSave.weapons[id].itemHash);
+    } else if (armorRegex.test(id) && buildToSave.armor[id].itemHash) {
+      displayItemDetails(buildToSave.armor[id].itemHash);
+    }
+  }
+
   async function searchItem(query) {
     const res = await queryDestinyApi(query);
     setItemToSearch("");
@@ -92,8 +92,6 @@ function Editor() {
 
   function changeItem(e, item, itemType) {
     e.stopPropagation();
-    const weaponRegex = /(kinetic)|(special)|(power)/;
-    const armorRegex = /(helmet)|(gloves)|(chest)|(boots)|(classItem)/;
     if (weaponRegex.test(itemType)) {
       const newWeapons = buildToSave.weapons;
       newWeapons[itemType] = item;
@@ -121,8 +119,12 @@ function Editor() {
     setBuildToSave({ ...buildToSave, stats: newStats });
   }
 
-  function testLookup(itemHash) {
-    console.log(manifest.DestinyInventoryItemDefinition[itemHash]);
+  function displayItemDetails(itemHash) {
+    const hash =
+      manifest.DestinyInventoryItemDefinition[itemHash].sockets.socketEntries[0]
+        .singleInitialItemHash;
+    console.log(manifest.DestinyInventoryItemDefinition[hash]);
+    setShowItemInfo(prev => !prev);
   }
 
   return (
@@ -137,6 +139,7 @@ function Editor() {
                 itemType={weapon}
                 img={buildToSave.weapons[weapon].icon}
                 toggleItemSearch={toggleItemSearch}
+                toggleItemInfo={toggleItemInfo}
               />
             ))}
           </div>
@@ -159,6 +162,7 @@ function Editor() {
                   itemType={armor}
                   img={buildToSave.armor[armor].icon}
                   toggleItemSearch={toggleItemSearch}
+                  toggleItemInfo={toggleItemInfo}
                 />
               ))}
             </div>
@@ -185,11 +189,6 @@ function Editor() {
         ) : (
           <button onClick={() => saveBuild(buildToSave)}>Save Build</button>
         )}
-        <button
-          onClick={() => testLookup(buildToSave.weapons.kinetic.itemHash)}
-        >
-          Test
-        </button>
       </div>
       {showClassPicker
         ? createPortal(
@@ -212,6 +211,9 @@ function Editor() {
             />,
             document.getElementById("modal-root")
           )
+        : null}
+      {showItemInfo
+        ? createPortal(<ItemInfoModal />, document.getElementById("modal-root"))
         : null}
     </>
   );
