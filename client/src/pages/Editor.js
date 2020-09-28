@@ -179,8 +179,6 @@ function Editor() {
     console.log(manifest.DestinyInventoryItemDefinition[itemHash]);
   }
 
-  console.log(manifest);
-
   return (
     <>
       <div className="editor">
