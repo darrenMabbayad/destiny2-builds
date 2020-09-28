@@ -7,6 +7,7 @@ const Schema = mongoose.Schema;
 const itemSchema = new Schema({
   name: { type: String },
   icon: { type: String },
+  itemHash: { type: Number },
 });
 
 // a subclass requires:

@@ -5,13 +5,11 @@ import CharacterStat from "../components/build-editor/CharacterStat";
 import ClassPicker from "../components/build-editor/ClassPicker";
 import ItemFrame from "../components/build-editor/ItemFrame";
 import FormInput from "../components/build-editor/FormInput";
-import saveBuild from "../utils/saveBuild";
-import updateBuild from "../utils/updateBuild";
-import queryDestinyApi from "../utils/queryDestinyApi";
-import getDestinyManifest from "../utils/getDestinyManifest";
-import destinyLogo from "../img/destiny-logo.png";
 import ClassPickerModal from "../components/build-editor/modals/ClassPickerModal";
 import ItemSearchModal from "../components/build-editor/modals/ItemSearchModal";
+import { saveBuild, updateBuild } from "../utils/loadout";
+import { queryDestinyApi, getDestinyManifest } from "../utils/destiny2";
+import destinyLogo from "../img/destiny-logo.png";
 
 function Editor() {
   // Initialize a build object to save/edit

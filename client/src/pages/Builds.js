@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import BuildCard from "../components/BuildCard";
-import deleteBuild from "../utils/deleteBuild";
-import fetchAllBuilds from "../utils/fetchAllBuilds";
+import { fetchAllBuilds, deleteBuild } from "../utils/loadout";
 
 function Builds() {
   const [builds, setBuilds] = useState([]);
