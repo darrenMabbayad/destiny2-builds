@@ -21,6 +21,7 @@ import { queryDestinyApi } from "../utils/destiny2";
 
 function Editor() {
   // Initialize a build object to save/edit
+  const { manifest } = useContext(DestinyContext);
   const location = useLocation();
   const buildToEdit =
     location.state !== undefined ? location.state.build : null;
@@ -34,7 +35,6 @@ function Editor() {
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [itemToChange, setItemToChange] = useState("");
   const [itemToSearch, setItemToSearch] = useState("");
-  const { manifest } = useContext(DestinyContext);
   const weaponRegex = /(kinetic)|(special)|(power)/;
   const armorRegex = /(helmet)|(gloves)|(chest)|(boots)|(classItem)/;
 
@@ -52,7 +52,6 @@ function Editor() {
 
   function selectClass(e) {
     const { name } = e.target;
-    console.log(e.target);
     if (name === "btn-warlock") {
       setBuildToSave({ ...buildToSave, selectedClass: "Warlock" });
     } else if (name === "btn-hunter") {
@@ -78,9 +77,9 @@ function Editor() {
   function toggleItemInfo(e) {
     const { id } = e.target;
     if (weaponRegex.test(id) && buildToSave.weapons[id].itemHash) {
-      displayItemDetails(buildToSave.weapons[id].itemHash);
+      displayItemDetails(buildToSave.weapons[id].itemHash, id);
     } else if (armorRegex.test(id) && buildToSave.armor[id].itemHash) {
-      displayItemDetails(buildToSave.armor[id].itemHash);
+      displayItemDetails(buildToSave.armor[id].itemHash, id);
     }
   }
 
@@ -119,11 +118,61 @@ function Editor() {
     setBuildToSave({ ...buildToSave, stats: newStats });
   }
 
-  function displayItemDetails(itemHash) {
-    const hash =
-      manifest.DestinyInventoryItemDefinition[itemHash].sockets.socketEntries[0]
-        .singleInitialItemHash;
-    console.log(manifest.DestinyInventoryItemDefinition[hash]);
+  function parseItemDetails(item) {
+    console.log(item);
+  }
+
+  function displayItemDetails(itemHash, itemType) {
+    const item = manifest.DestinyInventoryItemDefinition[itemHash];
+    // data to display for a weapon
+    let itemToParse = {};
+    // TODO data to display for armor
+    if (weaponRegex.test(itemType)) {
+      const weaponDetails = {
+        itemType: item.itemTypeDisplayName,
+        itemTier: item.itemTypeAndTierDisplayName,
+        stats: {
+          impact: item.stats.stats[4043523819].value,
+          range: item.stats.stats[1240592695].value,
+          stability: item.stats.stats[155624089].value,
+          handling: item.stats.stats[943549884].value,
+          reloadSpeed: item.stats.stats[4188031367].value,
+          roundsPerMinute: item.stats.stats[4284893193].value,
+          magazine: item.stats.stats[3871231066].value,
+          aimAssistance: item.stats.stats[1345609583].value,
+          inventorySize: item.stats.stats[4043523819].value,
+          zoom: item.stats.stats[3555269338].value,
+          recoil: item.stats.stats[2715839340].value,
+        },
+      };
+      itemToParse = weaponDetails;
+    } else if (armorRegex.test(itemType)) {
+      console.log(item);
+      const armorDetails = {
+        modSockets: {
+          socket0: {
+            icon:
+              manifest.DestinyInventoryItemDefinition[
+                item.sockets.socketEntries[0].singleInitialItemHash
+              ].displayProperties.icon,
+          },
+          socket1: {
+            icon:
+              manifest.DestinyInventoryItemDefinition[
+                item.sockets.socketEntries[1].singleInitialItemHash
+              ].displayProperties.icon,
+          },
+          socket2: {
+            icon:
+              manifest.DestinyInventoryItemDefinition[
+                item.sockets.socketEntries[2].singleInitialItemHash
+              ].displayProperties.icon,
+          },
+        },
+      };
+      itemToParse = armorDetails;
+    }
+    parseItemDetails(itemToParse);
     setShowItemInfo(prev => !prev);
   }
 

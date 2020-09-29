@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { DestinyContext } from "../../../context/DestinyContext";
 import FormInput from "../FormInput";
+import checkArmorSlot from "../../../utils/checkArmorSlot";
+import checkWeaponSlot from "../../../utils/checkWeaponSlot";
 
 function ItemSearchModal({
   toggleItemSearch,
@@ -10,10 +13,19 @@ function ItemSearchModal({
   changeItem,
 }) {
   const [searchResults, setSearchResults] = useState([]);
+  const { manifest } = useContext(DestinyContext);
+  const weaponRegex = /(kinetic)|(special)|(power)/;
+  const armorRegex = /(helmet)|(gloves)|(chest)|(boots)|(classItem)/;
 
   async function searchItemAndRenderList(query) {
     let res = await searchItem(query);
-    setSearchResults(res.Response.results.results);
+    const items = res.Response.results.results.map(
+      result => manifest.DestinyInventoryItemDefinition[result.hash]
+    );
+    const filteredItems = items.filter(item =>
+      item.hasOwnProperty("collectibleHash")
+    );
+    setSearchResults(filteredItems);
   }
 
   function closeModal(e) {
@@ -22,13 +34,22 @@ function ItemSearchModal({
   }
 
   function changeItemAndCloseModal(e, item) {
-    const selectedItem = {
-      name: item.displayProperties.name,
-      icon: `http://www.bungie.net/${item.displayProperties.icon}`,
-      itemHash: item.hash,
-    };
-    changeItem(e, selectedItem, itemToChange);
-    closeModal(e);
+    let error = "";
+    if (weaponRegex.test(itemToChange)) {
+      error = checkWeaponSlot(itemToChange, item);
+    } else if (armorRegex.test(itemToChange)) {
+      error = checkArmorSlot(itemToChange, item);
+    }
+
+    if (!error) {
+      const selectedItem = {
+        name: item.displayProperties.name,
+        icon: `http://www.bungie.net/${item.displayProperties.icon}`,
+        itemHash: item.hash,
+      };
+      changeItem(e, selectedItem, itemToChange);
+      closeModal(e);
+    }
   }
 
   return (
@@ -45,10 +66,10 @@ function ItemSearchModal({
         <button onClick={() => searchItemAndRenderList(itemToSearch)}>
           Search
         </button>
-        <div>
-          {searchResults &&
-            searchResults.map((item, index) => (
-              <div key={index} className="item-frame">
+        {searchResults && (
+          <div className="item-search-results">
+            {searchResults.map((item, index) => (
+              <div key={index} className="item-frame search-result">
                 <img
                   className="item-frame-img"
                   src={`http://www.bungie.net/${item.displayProperties.icon}`}
@@ -57,7 +78,8 @@ function ItemSearchModal({
                 />
               </div>
             ))}
-        </div>
+          </div>
+        )}
       </div>
     </>
   );

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { getManifestUrls } from "../utils/destiny2";
+import axios from "axios";
 
 const DestinyContext = createContext();
 
@@ -13,6 +14,7 @@ function DestinyContextProvider({ children }) {
   async function getManifest() {
     try {
       let TIME_START = performance.now();
+      let TIME_END = 0;
       let manifestUrl = "";
       // Fetch manifest URLs if they aren't already in local storage
       if (!localStorage.getItem("destinyManifestPath")) {
@@ -24,20 +26,16 @@ function DestinyContextProvider({ children }) {
         manifestUrl = localStorage.getItem("destinyManifestPath");
       }
       // Fetch the manifest
-      const res = await fetch(`https://www.bungie.net${manifestUrl}`);
-      if (!res.ok) {
-        throw new Error(res.status);
-      } else {
-        const json = await res.json();
-        setManifest(json);
-      }
-      // Log performance
-      let TIME_END = performance.now();
+      const res = await axios.get(`https://www.bungie.net${manifestUrl}`);
+      const json = res.data;
+      setManifest(json);
+      TIME_END = performance.now();
       console.log(
         `Finished loading Destiny 2 manifest - ${TIME_END - TIME_START} ms`
       );
     } catch (e) {
-      console.error(e);
+      console.log("Could not load Destiny 2 manifest...");
+      console.error(e.response.status);
     }
   }
 
