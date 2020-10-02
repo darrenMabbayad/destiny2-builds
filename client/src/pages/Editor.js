@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import CharacterStat from "../components/build-editor/CharacterStat";
@@ -7,7 +7,8 @@ import ItemFrame from "../components/build-editor/ItemFrame";
 import FormInput from "../components/build-editor/FormInput";
 import ClassPickerModal from "../components/build-editor/modals/ClassPickerModal";
 import ItemSearchModal from "../components/build-editor/modals/ItemSearchModal";
-import ItemInfoModal from "../components/build-editor/modals/ItemInfoModal";
+import WeaponDetailsModal from "../components/build-editor/modals/WeaponDetailsModal";
+import ArmorDetailsModal from "../components/build-editor/modals/ArmorDetailsModal";
 import { DestinyContext } from "../context/DestinyContext";
 import {
   loadout,
@@ -16,25 +17,38 @@ import {
   stats,
   saveBuild,
   updateBuild,
+  fetchBuild,
 } from "../utils/loadout";
 import { queryDestinyApi } from "../utils/destiny2";
+import parseItemStats from "../utils/parseItemStats";
 
 function Editor() {
   // Initialize a build object to save/edit
   const { manifest } = useContext(DestinyContext);
   const location = useLocation();
   const buildToEdit =
-    location.state !== undefined ? location.state.build : null;
-  const [buildToSave, setBuildToSave] = useState(
-    buildToEdit ? buildToEdit : loadout
-  );
+    location.state !== undefined ? location.state.buildId : null;
+  const [buildToSave, setBuildToSave] = useState(loadout);
+
+  // Load a specific build on first render if there is one
+  useEffect(() => {
+    async function loadBuildToUpdate() {
+      const data = await fetchBuild(buildToEdit);
+      setBuildToSave(data);
+    }
+    if (buildToEdit) {
+      loadBuildToUpdate();
+    }
+  }, [buildToEdit]);
 
   // State variables for toggling the class picker/item finder
   const [showClassPicker, setShowClassPicker] = useState(false);
   const [showItemSearch, setShowItemSearch] = useState(false);
-  const [showItemInfo, setShowItemInfo] = useState(false);
+  const [showWeaponDetails, setShowWeaponDetails] = useState(false);
+  const [showArmorDetails, setShowArmorDetails] = useState(false);
   const [itemToChange, setItemToChange] = useState("");
   const [itemToSearch, setItemToSearch] = useState("");
+  const [hoveredItem, setHoveredItem] = useState({});
   const weaponRegex = /(kinetic)|(special)|(power)/;
   const armorRegex = /(helmet)|(gloves)|(chest)|(boots)|(classItem)/;
 
@@ -61,6 +75,7 @@ function Editor() {
     }
   }
 
+  // ------------- START: Modal Toggles -------------- //
   function toggleClassPicker(e) {
     e.stopPropagation();
     setShowClassPicker(prevState => !prevState);
@@ -82,6 +97,19 @@ function Editor() {
       displayItemDetails(buildToSave.armor[id].itemHash, id);
     }
   }
+
+  function displayItemDetails(itemHash, itemType) {
+    const item = manifest.DestinyInventoryItemDefinition[itemHash];
+    const itemDetails = parseItemStats(manifest, item, itemType);
+    if (weaponRegex.test(itemType)) {
+      setHoveredItem(itemDetails);
+      setShowWeaponDetails(prev => !prev);
+    } else if (armorRegex.test(itemType)) {
+      setHoveredItem(itemDetails);
+      setShowArmorDetails(prev => !prev);
+    }
+  }
+  // ------------- END: Modal Toggles -------------- //
 
   async function searchItem(query) {
     const res = await queryDestinyApi(query);
@@ -116,64 +144,6 @@ function Editor() {
       }
     }
     setBuildToSave({ ...buildToSave, stats: newStats });
-  }
-
-  function parseItemDetails(item) {
-    console.log(item);
-  }
-
-  function displayItemDetails(itemHash, itemType) {
-    const item = manifest.DestinyInventoryItemDefinition[itemHash];
-    // data to display for a weapon
-    let itemToParse = {};
-    // TODO data to display for armor
-    if (weaponRegex.test(itemType)) {
-      const weaponDetails = {
-        itemType: item.itemTypeDisplayName,
-        itemTier: item.itemTypeAndTierDisplayName,
-        stats: {
-          impact: item.stats.stats[4043523819].value,
-          range: item.stats.stats[1240592695].value,
-          stability: item.stats.stats[155624089].value,
-          handling: item.stats.stats[943549884].value,
-          reloadSpeed: item.stats.stats[4188031367].value,
-          roundsPerMinute: item.stats.stats[4284893193].value,
-          magazine: item.stats.stats[3871231066].value,
-          aimAssistance: item.stats.stats[1345609583].value,
-          inventorySize: item.stats.stats[4043523819].value,
-          zoom: item.stats.stats[3555269338].value,
-          recoil: item.stats.stats[2715839340].value,
-        },
-      };
-      itemToParse = weaponDetails;
-    } else if (armorRegex.test(itemType)) {
-      console.log(item);
-      const armorDetails = {
-        modSockets: {
-          socket0: {
-            icon:
-              manifest.DestinyInventoryItemDefinition[
-                item.sockets.socketEntries[0].singleInitialItemHash
-              ].displayProperties.icon,
-          },
-          socket1: {
-            icon:
-              manifest.DestinyInventoryItemDefinition[
-                item.sockets.socketEntries[1].singleInitialItemHash
-              ].displayProperties.icon,
-          },
-          socket2: {
-            icon:
-              manifest.DestinyInventoryItemDefinition[
-                item.sockets.socketEntries[2].singleInitialItemHash
-              ].displayProperties.icon,
-          },
-        },
-      };
-      itemToParse = armorDetails;
-    }
-    parseItemDetails(itemToParse);
-    setShowItemInfo(prev => !prev);
   }
 
   return (
@@ -239,31 +209,36 @@ function Editor() {
           <button onClick={() => saveBuild(buildToSave)}>Save Build</button>
         )}
       </div>
-      {showClassPicker
-        ? createPortal(
-            <ClassPickerModal
-              selectClass={selectClass}
-              toggleClassPicker={toggleClassPicker}
-            />,
-            document.getElementById("modal-root")
-          )
-        : null}
-      {showItemSearch
-        ? createPortal(
-            <ItemSearchModal
-              toggleItemSearch={toggleItemSearch}
-              itemToSearch={itemToSearch}
-              handleChange={handleChange}
-              searchItem={searchItem}
-              itemToChange={itemToChange}
-              changeItem={changeItem}
-            />,
-            document.getElementById("modal-root")
-          )
-        : null}
-      {showItemInfo
-        ? createPortal(<ItemInfoModal />, document.getElementById("modal-root"))
-        : null}
+      {showClassPicker &&
+        createPortal(
+          <ClassPickerModal
+            selectClass={selectClass}
+            toggleClassPicker={toggleClassPicker}
+          />,
+          document.getElementById("modal-root")
+        )}
+      {showItemSearch &&
+        createPortal(
+          <ItemSearchModal
+            toggleItemSearch={toggleItemSearch}
+            itemToSearch={itemToSearch}
+            handleChange={handleChange}
+            searchItem={searchItem}
+            itemToChange={itemToChange}
+            changeItem={changeItem}
+          />,
+          document.getElementById("modal-root")
+        )}
+      {showWeaponDetails &&
+        createPortal(
+          <WeaponDetailsModal details={hoveredItem} />,
+          document.getElementById("modal-root")
+        )}
+      {showArmorDetails &&
+        createPortal(
+          <ArmorDetailsModal details={hoveredItem} />,
+          document.getElementById("modal-root")
+        )}
     </>
   );
 }

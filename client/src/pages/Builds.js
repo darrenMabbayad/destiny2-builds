@@ -27,7 +27,7 @@ function Builds() {
 
   // Go to editor and edit build
   function editBuild(build) {
-    history.push(`/editor/${build._id}`, { build: build });
+    history.push(`/editor/${build._id}`, { buildId: build._id });
   }
 
   /* 

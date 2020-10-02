@@ -1,8 +1,84 @@
 .item-info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.weapon-detail {
   &-modal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    background: darkcyan;
+    border-radius: 5px;
+    padding: 1em;
+    width: 400px;
+
+    &-info {
+      display: grid;
+      grid-template-areas: "label value bar";
+      grid-template-columns: 120px 30px 100px;
+      gap: 1em;
+    }
+
+    &-perks {
+      display: flex;
+
+      & > :not(:last-child) {
+        margin-right: 1em;
+      }
+
+      & > :nth-child(2),
+      & > :first-child {
+        margin-right: 0.75em;
+      }
+
+      &-slot {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        width: 40px;
+
+        img {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  &-stat {
+    &-label {
+      grid-area: label;
+      text-align: right;
+    }
+
+    &-value {
+      grid-area: value;
+      text-align: right;
+    }
+
+    &-bar {
+      position: relative;
+      height: 10px;
+      width: 75px;
+      border-radius: 2px;
+      border: 1px solid black;
+      align-self: center;
+      grid-area: bar;
+
+      &-filler {
+        background: white;
+        height: 100%;
+        border-radius: inherit;
+      }
+    }
+  }
+}
+
+.armor-detail {
+  &-modal {
+    background: darkcyan;
+    border-radius: 5px;
+    padding: 1em;
+    width: 400px;
   }
 }
