@@ -10,7 +10,7 @@ function ItemFrame({ itemType, img, toggleItemSearch, toggleItemInfo }) {
         alt=""
         onClick={e => toggleItemSearch(e)}
         onMouseEnter={e => toggleItemInfo(e)}
-        // onMouseLeave={e => toggleItemInfo(e)}
+        //onMouseLeave={e => toggleItemInfo(e)}
       />
     </div>
   );
