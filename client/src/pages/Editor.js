@@ -146,6 +146,27 @@ function Editor() {
     setBuildToSave({ ...buildToSave, stats: newStats });
   }
 
+  function equipPerk(e, perk, weaponSlot) {
+    const { parentElement } = e.target;
+    const newWeapons = buildToSave.weapons;
+    const perkToEquip = {
+      name: perk.name,
+      description: perk.description,
+      icon: perk.icon,
+    };
+    const emptyPerkSlot = {
+      name: "",
+      description: "",
+      icon: "",
+    };
+    newWeapons[weaponSlot].perks[parentElement.id] = perkToEquip;
+    for (let i = 0; i < newWeapons[weaponSlot].perks.length; i++) {
+      if (!(i in newWeapons[weaponSlot].perks)) {
+        newWeapons[weaponSlot].perks[i] = emptyPerkSlot;
+      }
+    }
+    setBuildToSave({ ...buildToSave, weapons: newWeapons });
+  }
   return (
     <>
       <div className="editor">
@@ -231,7 +252,11 @@ function Editor() {
         )}
       {showWeaponDetails &&
         createPortal(
-          <WeaponDetailsModal details={hoveredItem} />,
+          <WeaponDetailsModal
+            currentWeapons={buildToSave.weapons}
+            details={hoveredItem}
+            equipPerk={equipPerk}
+          />,
           document.getElementById("modal-root")
         )}
       {showArmorDetails &&

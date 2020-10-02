@@ -1,11 +1,10 @@
-import React, { createContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { getManifestUrls } from "../utils/destiny2";
 import axios from "axios";
 
 const DestinyContext = createContext();
 
 function DestinyContextProvider({ children }) {
-  const cache = useRef({});
   const [manifest, setManifest] = useState({});
 
   useEffect(() => {
@@ -18,14 +17,8 @@ function DestinyContextProvider({ children }) {
         const data = await getManifestUrls();
         const manifestUrl = `https://www.bungie.net${data.Response.jsonWorldContentPaths.en}`;
         // Fetch the manifest and set data in state
-        if (cache.current[manifestUrl]) {
-          const data = cache.current[manifestUrl];
-          setManifest(data);
-        } else {
-          const res = await axios.get(manifestUrl);
-          const json = res.data;
-          setManifest(json);
-        }
+        const res = await axios.get(manifestUrl);
+        setManifest(res.data);
         // Log performance
         TIME_END = performance.now();
         console.log(
@@ -33,7 +26,7 @@ function DestinyContextProvider({ children }) {
         );
       } catch (e) {
         console.log("Could not load Destiny 2 manifest...");
-        console.error(e.response.status);
+        console.log(e);
       }
     }
     getManifest();

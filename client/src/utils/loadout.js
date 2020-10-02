@@ -21,16 +21,19 @@ const loadout = {
       name: "",
       icon: leviathanIcon,
       itemHash: 0,
+      perks: [],
     },
     special: {
       name: "",
       icon: leviathanIcon,
       itemHash: 0,
+      perks: [],
     },
     power: {
       name: "",
       icon: leviathanIcon,
       itemHash: 0,
+      perks: [],
     },
   },
   armor: {

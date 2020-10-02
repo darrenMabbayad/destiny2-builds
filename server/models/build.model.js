@@ -10,6 +10,13 @@ const itemSchema = new Schema({
   itemHash: { type: Number },
 });
 
+const weaponSchema = new Schema({
+  name: { type: String },
+  icon: { type: String },
+  itemHash: { type: Number },
+  perks: { type: Array },
+});
+
 // a subclass requires:
 // the character class selected: hunter/warlock/titan
 // associated tree: top/middle/bottom --- this will change with stasis subclasses
@@ -45,9 +52,9 @@ const buildSchema = new Schema(
       strength: { type: Number, required: true },
     },
     weapons: {
-      kinetic: itemSchema,
-      special: itemSchema,
-      power: itemSchema,
+      kinetic: weaponSchema,
+      special: weaponSchema,
+      power: weaponSchema,
     },
     armor: {
       helmet: itemSchema,

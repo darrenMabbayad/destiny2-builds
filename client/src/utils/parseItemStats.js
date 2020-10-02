@@ -4,22 +4,11 @@ export default function parseItemStats(manifest, item, itemType) {
   // Data to display for weapons
   if (weaponRegex.test(itemType)) {
     const weaponPerks = getWeaponPerks(manifest, item);
+    const weaponGeneralInfo = getWeaponGeneralInfo(manifest, item);
+    const weaponStats = getWeaponStats(manifest, item);
     const weaponDetails = {
-      itemType: item.itemTypeDisplayName,
-      itemTier: item.itemTypeAndTierDisplayName,
-      stats: {
-        impact: item.stats.stats[4043523819].value,
-        range: item.stats.stats[1240592695].value,
-        stability: item.stats.stats[155624089].value,
-        handling: item.stats.stats[943549884].value,
-        reloadSpeed: item.stats.stats[4188031367].value,
-        roundsPerMinute: item.stats.stats[4284893193].value,
-        magazine: item.stats.stats[3871231066].value,
-        aimAssistance: item.stats.stats[1345609583].value,
-        inventorySize: item.stats.stats[4043523819].value,
-        zoom: item.stats.stats[3555269338].value,
-        recoil: item.stats.stats[2715839340].value,
-      },
+      generalInfo: weaponGeneralInfo,
+      stats: weaponStats,
       perks: weaponPerks,
       mod: "",
     };
@@ -84,4 +73,28 @@ function getWeaponPerks(manifest, item) {
     specificSlotPerks.push(perks);
   });
   return specificSlotPerks;
+}
+
+function getWeaponGeneralInfo(manifest, item) {
+  const slotHash = item.equippingBlock.equipmentSlotTypeHash;
+  const slotType =
+    manifest.DestinyEquipmentSlotDefinition[slotHash].displayProperties.name;
+  const itemInfo = {
+    itemType: item.itemTypeDisplayName,
+    itemTier: item.itemTypeAndTierDisplayName,
+    itemSlot: slotType,
+  };
+  return itemInfo;
+}
+
+function getWeaponStats(manifest, item) {
+  const weaponStats = [];
+  for (const [key, value] of Object.entries(item.stats.stats)) {
+    const stat = {
+      label: manifest.DestinyStatDefinition[key].displayProperties.name,
+      value: value.value,
+    };
+    weaponStats.push(stat);
+  }
+  return weaponStats;
 }

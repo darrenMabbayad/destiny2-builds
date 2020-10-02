@@ -40,7 +40,7 @@
 
         img {
           width: 100%;
-          filter: brightness(70%) sepia(100);
+          cursor: pointer;
         }
       }
     }
@@ -73,6 +73,10 @@
       }
     }
   }
+}
+
+.perk-equipped {
+  filter: brightness(70%) sepia(100);
 }
 
 .armor-detail {

@@ -17,7 +17,8 @@ function ItemSearchModal({
   const weaponRegex = /(kinetic)|(special)|(power)/;
   const armorRegex = /(helmet)|(gloves)|(chest)|(boots)|(classItem)/;
 
-  async function searchItemAndRenderList(query) {
+  async function searchItemAndRenderList(e, query) {
+    e.preventDefault();
     let res = await searchItem(query);
     const items = res.Response.results.results.map(
       result => manifest.DestinyInventoryItemDefinition[result.hash]
@@ -46,6 +47,7 @@ function ItemSearchModal({
         name: item.displayProperties.name,
         icon: `http://www.bungie.net/${item.displayProperties.icon}`,
         itemHash: item.hash,
+        perks: [],
       };
       changeItem(e, selectedItem, itemToChange);
       closeModal(e);
@@ -56,14 +58,16 @@ function ItemSearchModal({
     <>
       <div className="item-search-overlay" onClick={e => closeModal(e)} />
       <div className="item-search-modal">
-        <FormInput
-          label="Item Finder"
-          name="search-query"
-          value={itemToSearch}
-          placeholder="Search an item"
-          handleChange={handleChange}
-        />
-        <button onClick={() => searchItemAndRenderList(itemToSearch)}>
+        <form onSubmit={e => searchItemAndRenderList(e, itemToSearch)}>
+          <FormInput
+            label="Item Finder"
+            name="search-query"
+            value={itemToSearch}
+            placeholder="Search an item"
+            handleChange={handleChange}
+          />
+        </form>
+        <button onClick={e => searchItemAndRenderList(e, itemToSearch)}>
           Search
         </button>
         {searchResults && (
