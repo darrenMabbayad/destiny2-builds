@@ -15,21 +15,25 @@ const weaponSchema = new Schema({
   icon: { type: String },
   itemHash: { type: Number },
   perks: { type: Array },
+  mod: {
+    name: { type: String },
+    description: { type: String },
+    icon: { type: String },
+  },
+  masterwork: {
+    name: { type: String },
+    description: { type: String },
+    icon: { type: String },
+  },
 });
 
 // a subclass requires:
 // the character class selected: hunter/warlock/titan
 // associated tree: top/middle/bottom --- this will change with stasis subclasses
 // skill choices: grenade, jump, classAbility selection
-const subClassSchema = new Schema({
-  class: { type: String, required: true },
-  tree: { type: String },
-  skills: {
-    grenade: {},
-    jump: {},
-    classAbility: {},
-  },
-});
+// const subClassSchema = new Schema({
+//   class: { type: String, required: true },
+// });
 
 // a full build/character loadout includes:
 // 1) name for the build REQUIRED

@@ -22,18 +22,48 @@ const loadout = {
       icon: leviathanIcon,
       itemHash: 0,
       perks: [],
+      mod: {
+        name: "",
+        description: "",
+        icon: "",
+      },
+      masterwork: {
+        name: "",
+        description: "",
+        icon: "",
+      },
     },
     special: {
       name: "",
       icon: leviathanIcon,
       itemHash: 0,
       perks: [],
+      mod: {
+        name: "",
+        description: "",
+        icon: "",
+      },
+      masterwork: {
+        name: "",
+        description: "",
+        icon: "",
+      },
     },
     power: {
       name: "",
       icon: leviathanIcon,
       itemHash: 0,
       perks: [],
+      mod: {
+        name: "",
+        description: "",
+        icon: "",
+      },
+      masterwork: {
+        name: "",
+        description: "",
+        icon: "",
+      },
     },
   },
   armor: {

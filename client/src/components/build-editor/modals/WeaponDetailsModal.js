@@ -1,6 +1,12 @@
 import React from "react";
 
-function WeaponDetailsModal({ currentWeapons, details, equipPerk }) {
+function WeaponDetailsModal({
+  currentWeapons,
+  details,
+  equipPerk,
+  equipMod,
+  equipMasterwork,
+}) {
   const generalStatRegex = /(Impact)|(Range)|(Stability)|(Handling)|(Reload Speed)/;
   const hiddenStatRegex = /(Aim Assistance)|(Inventory Size)|(Zoom)|(Recoil Direction)/;
   let stats = {
@@ -17,24 +23,42 @@ function WeaponDetailsModal({ currentWeapons, details, equipPerk }) {
 
   let weaponSlot = "";
   let equippedPerks = [];
+  let equippedMod = {};
+  let equippedMasterwork = {};
   if (details.generalInfo.itemSlot === "Kinetic Weapons") {
     equippedPerks = currentWeapons.kinetic.perks;
+    equippedMod = currentWeapons.kinetic.mod;
+    equippedMasterwork = currentWeapons.kinetic.masterwork;
     weaponSlot = "kinetic";
   } else if (details.generalInfo.itemSlot === "Energy Weapons") {
     equippedPerks = currentWeapons.special.perks;
+    equippedMod = currentWeapons.special.mod;
+    equippedMasterwork = currentWeapons.special.masterwork;
     weaponSlot = "special";
   } else if (details.generalInfo.itemSlot === "Power Weapons") {
     equippedPerks = currentWeapons.power.perks;
+    equippedMod = currentWeapons.power.mod;
+    equippedMasterwork = currentWeapons.power.masterwork;
     weaponSlot = "power";
   }
 
-  function getClassName(perkName, slotIndex) {
-    if (!equippedPerks[slotIndex]) {
+  function getPerkClassName(perkName, slotType) {
+    if (!equippedPerks[slotType]) {
       return "perk equipped";
     } else {
-      if (equippedPerks[slotIndex].name === perkName) return "perk-equipped";
+      if (equippedPerks[slotType].name === perkName) return "perk-equipped";
       else return null;
     }
+  }
+
+  function getModClassName(mod) {
+    if (equippedMod.name === mod) return "mod-equipped";
+    else return null;
+  }
+
+  function getMasterworkClassName(masterwork) {
+    if (equippedMasterwork.name === masterwork) return "masterwork-equipped";
+    else return null;
   }
 
   return (
@@ -80,7 +104,7 @@ function WeaponDetailsModal({ currentWeapons, details, equipPerk }) {
               <img
                 key={index}
                 id={perk.name}
-                className={getClassName(perk.name, slotIndex)}
+                className={getPerkClassName(perk.name, slotIndex)}
                 src={`https://www.bungie.net${perk.icon}`}
                 alt=""
                 onClick={e => equipPerk(e, perk, weaponSlot)}
@@ -88,6 +112,32 @@ function WeaponDetailsModal({ currentWeapons, details, equipPerk }) {
             ))}
           </div>
         ))}
+      </div>
+      <div className="weapon-detail-modal-mods">
+        <div className="weapon-detail-modal-mods-equippable">
+          {details.mods.equippableMods.map((mod, index) => (
+            <img
+              key={index}
+              id={mod.name}
+              className={getModClassName(mod.name)}
+              src={`https://www.bungie.net${mod.icon}`}
+              alt=""
+              onClick={() => equipMod(mod, weaponSlot)}
+            />
+          ))}
+        </div>
+        <div className="weapon-detail-modal-mods-masterwork">
+          {details.mods.masterworkChoices.map((masterwork, index) => (
+            <img
+              key={index}
+              id={masterwork.name}
+              className={getMasterworkClassName(masterwork.name)}
+              src={`https://www.bungie.net${masterwork.icon}`}
+              alt=""
+              onClick={() => equipMasterwork(masterwork, weaponSlot)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -48,6 +48,8 @@ function ItemSearchModal({
         icon: `http://www.bungie.net/${item.displayProperties.icon}`,
         itemHash: item.hash,
         perks: [],
+        mod: { name: "", description: "", icon: "" },
+        masterwork: { name: "", description: "", icon: "" },
       };
       changeItem(e, selectedItem, itemToChange);
       closeModal(e);

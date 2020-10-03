@@ -44,6 +44,23 @@
         }
       }
     }
+
+    &-mods {
+      &-equippable,
+      &-masterwork {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+        gap: 0.25em;
+
+        img {
+          width: 35px;
+          cursor: pointer;
+        }
+      }
+      &-equippable {
+        margin-bottom: 1em;
+      }
+    }
   }
 
   &-stat {
@@ -77,6 +94,14 @@
 
 .perk-equipped {
   filter: brightness(70%) sepia(100);
+}
+
+.mod-equipped {
+  border: solid pink 3px;
+}
+
+.masterwork-equipped {
+  border: solid pink 3px;
 }
 
 .armor-detail {

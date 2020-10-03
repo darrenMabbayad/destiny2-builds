@@ -167,6 +167,29 @@ function Editor() {
     }
     setBuildToSave({ ...buildToSave, weapons: newWeapons });
   }
+
+  function equipMod(mod, weaponSlot) {
+    const newWeapons = buildToSave.weapons;
+    const modToEquip = {
+      name: mod.name,
+      description: mod.description,
+      icon: mod.icon,
+    };
+    newWeapons[weaponSlot].mod = modToEquip;
+    setBuildToSave({ ...buildToSave, weapons: newWeapons });
+  }
+
+  function equipMasterwork(masterwork, weaponSlot) {
+    const newWeapons = buildToSave.weapons;
+    const masterworkToEquip = {
+      name: masterwork.name,
+      description: masterwork.description,
+      icon: masterwork.icon,
+    };
+    newWeapons[weaponSlot].masterwork = masterworkToEquip;
+    setBuildToSave({ ...buildToSave, weapons: newWeapons });
+  }
+  console.log(buildToSave);
   return (
     <>
       <div className="editor">
@@ -256,6 +279,8 @@ function Editor() {
             currentWeapons={buildToSave.weapons}
             details={hoveredItem}
             equipPerk={equipPerk}
+            equipMod={equipMod}
+            equipMasterwork={equipMasterwork}
           />,
           document.getElementById("modal-root")
         )}
