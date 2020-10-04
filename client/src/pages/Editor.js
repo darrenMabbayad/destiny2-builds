@@ -189,7 +189,35 @@ function Editor() {
     newWeapons[weaponSlot].masterwork = masterworkToEquip;
     setBuildToSave({ ...buildToSave, weapons: newWeapons });
   }
-  console.log(buildToSave);
+
+  function equipArmorMod(e, mod, armorSlot) {
+    const { parentElement } = e.target;
+    const newArmor = buildToSave.armor;
+    const modToEquip = {
+      name: mod.name,
+      description: mod.description,
+      icon: mod.icon,
+    };
+    const emptyModSlot = {
+      name: "",
+      description: "",
+      icon: "",
+    };
+    newArmor[armorSlot].mods[parentElement.id] = modToEquip;
+    for (let i = 0; i < newArmor[armorSlot].mods.length; i++) {
+      if (!(i in newArmor[armorSlot].mods)) {
+        newArmor[armorSlot].mods[i] = emptyModSlot;
+      }
+    }
+    setBuildToSave({ ...buildToSave, armor: newArmor });
+  }
+
+  function equipArmorEnergyType(energyType, armorSlot) {
+    const newArmor = buildToSave.armor;
+    newArmor[armorSlot].energyType = energyType;
+    setBuildToSave({ ...buildToSave, armor: newArmor });
+  }
+
   return (
     <>
       <div className="editor">
@@ -286,7 +314,12 @@ function Editor() {
         )}
       {showArmorDetails &&
         createPortal(
-          <ArmorDetailsModal details={hoveredItem} />,
+          <ArmorDetailsModal
+            currentArmor={buildToSave.armor}
+            details={hoveredItem}
+            equipArmorMod={equipArmorMod}
+            equipArmorEnergyType={equipArmorEnergyType}
+          />,
           document.getElementById("modal-root")
         )}
     </>

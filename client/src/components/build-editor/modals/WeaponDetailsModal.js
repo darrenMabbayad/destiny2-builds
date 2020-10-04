@@ -44,7 +44,7 @@ function WeaponDetailsModal({
 
   function getPerkClassName(perkName, slotType) {
     if (!equippedPerks[slotType]) {
-      return "perk equipped";
+      return null;
     } else {
       if (equippedPerks[slotType].name === perkName) return "perk-equipped";
       else return null;
@@ -63,7 +63,7 @@ function WeaponDetailsModal({
 
   return (
     <div className="weapon-detail-modal item-info">
-      <div>
+      <div className="weapon-detail-modal-stats">
         <h3>Weapon Stats</h3>
         {stats.general.map((stat, index) => (
           <div key={index} className="weapon-detail-modal-info">
@@ -78,7 +78,7 @@ function WeaponDetailsModal({
           </div>
         ))}
       </div>
-      <div>
+      <div className="weapon-detail-modal-stats">
         <h3>Hidden Stats</h3>
         {stats.hidden.map((stat, index) => (
           <div key={index} className="weapon-detail-modal-info">

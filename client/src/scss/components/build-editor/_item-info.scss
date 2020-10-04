@@ -19,8 +19,13 @@
       gap: 1em;
     }
 
+    &-stats {
+      margin-bottom: 1em;
+    }
+
     &-perks {
       display: flex;
+      margin-bottom: 1em;
 
       & > :not(:last-child) {
         margin-right: 1em;
@@ -97,18 +102,64 @@
 }
 
 .mod-equipped {
-  border: solid pink 3px;
+  border: solid goldenrod 3px;
 }
 
 .masterwork-equipped {
-  border: solid pink 3px;
+  border: solid goldenrod 3px;
+}
+
+.armor-energy-equipped {
+  border: solid goldenrod 3px;
+}
+
+.armor-mod-equipped {
+  border: solid goldenrod 3px;
+}
+
+.armor-energy-type-equipped {
+  border: solid goldenrod 3px;
 }
 
 .armor-detail {
   &-modal {
-    background: darkcyan;
+    background: darkgrey;
     border-radius: 5px;
     padding: 1em;
     width: 400px;
+
+    &-energy-types {
+      display: flex;
+      display: "flex";
+      justify-content: space-evenly;
+      align-items: center;
+      margin-bottom: 1em;
+
+      img {
+        width: 65px;
+        cursor: pointer;
+      }
+    }
+
+    &-mod-slot {
+      display: "flex";
+      justify-content: space-evenly;
+      align-items: center;
+      margin-bottom: 1em;
+
+      img {
+        width: 40px;
+        cursor: pointer;
+      }
+    }
+
+    &-links {
+      & > :not(:last-child) {
+        margin-bottom: 0.5em;
+      }
+    }
+    &-link {
+      display: block;
+    }
   }
 }

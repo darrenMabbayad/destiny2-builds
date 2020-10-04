@@ -23,9 +23,16 @@ function ItemSearchModal({
     const items = res.Response.results.results.map(
       result => manifest.DestinyInventoryItemDefinition[result.hash]
     );
-    const filteredItems = items.filter(item =>
-      item.hasOwnProperty("collectibleHash")
-    );
+    let filteredItems = [];
+    if (weaponRegex.test(itemToChange)) {
+      filteredItems = items.filter(item =>
+        item.hasOwnProperty("collectibleHash")
+      );
+    } else if (armorRegex.test(itemToChange)) {
+      filteredItems = items.filter(
+        item => !item.hasOwnProperty("collectibleHash")
+      );
+    }
     setSearchResults(filteredItems);
   }
 
@@ -37,20 +44,31 @@ function ItemSearchModal({
   function changeItemAndCloseModal(e, item) {
     let error = "";
     if (weaponRegex.test(itemToChange)) {
-      error = checkWeaponSlot(itemToChange, item);
+      error = checkWeaponSlot(manifest, itemToChange, item);
     } else if (armorRegex.test(itemToChange)) {
-      error = checkArmorSlot(itemToChange, item);
+      error = checkArmorSlot(manifest, itemToChange, item);
     }
 
     if (!error) {
-      const selectedItem = {
-        name: item.displayProperties.name,
-        icon: `http://www.bungie.net/${item.displayProperties.icon}`,
-        itemHash: item.hash,
-        perks: [],
-        mod: { name: "", description: "", icon: "" },
-        masterwork: { name: "", description: "", icon: "" },
-      };
+      let selectedItem = {};
+      if (weaponRegex.test(itemToChange)) {
+        selectedItem = {
+          name: item.displayProperties.name,
+          icon: `http://www.bungie.net/${item.displayProperties.icon}`,
+          itemHash: item.hash,
+          perks: [],
+          mod: { name: "", description: "", icon: "" },
+          masterwork: { name: "", description: "", icon: "" },
+        };
+      } else if (armorRegex.test(itemToChange)) {
+        selectedItem = {
+          name: item.displayProperties.name,
+          icon: `http://www.bungie.net/${item.displayProperties.icon}`,
+          itemHash: item.hash,
+          mods: [],
+          energyType: "",
+        };
+      }
       changeItem(e, selectedItem, itemToChange);
       closeModal(e);
     }

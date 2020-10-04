@@ -4,10 +4,12 @@ const Schema = mongoose.Schema;
 // equipped items require:
 // a name specific to an equipped item, fetched from bungie API
 // a string path to the item's icon fetched from bungie API
-const itemSchema = new Schema({
+const armorSchema = new Schema({
   name: { type: String },
   icon: { type: String },
   itemHash: { type: Number },
+  mods: { type: Array },
+  energyType: { type: String },
 });
 
 const weaponSchema = new Schema({
@@ -61,11 +63,11 @@ const buildSchema = new Schema(
       power: weaponSchema,
     },
     armor: {
-      helmet: itemSchema,
-      gloves: itemSchema,
-      chest: itemSchema,
-      boots: itemSchema,
-      classItem: itemSchema,
+      helmet: armorSchema,
+      gloves: armorSchema,
+      chest: armorSchema,
+      boots: armorSchema,
+      classItem: armorSchema,
     },
   },
   {
