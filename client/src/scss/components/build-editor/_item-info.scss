@@ -146,7 +146,7 @@
     &-energy-bar {
       height: 7px;
       width: 30px;
-      background: white;
+      background: lightgrey;
 
       &-container {
         display: flex;
@@ -192,12 +192,22 @@
   width: 33px;
 }
 
+.arc-energy-bar-container {
+  border: solid lightblue 2px;
+}
+.solar-energy-bar-container {
+  border: solid orange 2px;
+}
+.void-energy-bar-container {
+  border: solid purple 2px;
+}
+
 .generic-energy-filled {
   background: darkslategrey;
 }
 
 .arc-energy-filled {
-  background: black;
+  background: lightblue;
 }
 
 .solar-energy-filled {

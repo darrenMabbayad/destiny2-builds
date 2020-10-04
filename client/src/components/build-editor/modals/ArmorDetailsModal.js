@@ -87,7 +87,13 @@ function ArmorDetailsModal({
           />
         ))}
       </div>
-      <div className="armor-detail-modal-energy-bar-container">
+      <div
+        className={
+          equippedEnergyType
+            ? `armor-detail-modal-energy-bar-container ${equippedEnergyType}-energy-bar-container`
+            : "armor-detail-modal-energy-bar-container"
+        }
+      >
         {renderEnergyBars()}
       </div>
       {details.mods.map((modSlot, slotIndex) => (
