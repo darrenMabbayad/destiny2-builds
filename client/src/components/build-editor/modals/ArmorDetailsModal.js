@@ -6,9 +6,9 @@ function ArmorDetailsModal({
   currentArmor,
   equipArmorEnergyType,
   equipArmorMod,
+  currentEnergyCost,
 }) {
   const classItemRegex = /(Hunter Cloak)|(Warlock Bond)|(Titan Mark)/;
-
   let armorSlot = "";
   let equippedMods = [];
   let equippedEnergyType = "";
@@ -48,6 +48,32 @@ function ArmorDetailsModal({
     else return null;
   }
 
+  function renderEnergyBars() {
+    let energyBars = [];
+    let filledClassName = "";
+    for (let i = 1; i < 11; i++) {
+      if (currentEnergyCost >= i) {
+        if (!equippedEnergyType) {
+          filledClassName = `generic-energy-filled`;
+        } else {
+          filledClassName = `${equippedEnergyType}-energy-filled`;
+        }
+      }
+      energyBars.push(
+        <div
+          key={i}
+          className={
+            filledClassName
+              ? `armor-detail-modal-energy-bar ${filledClassName}`
+              : "armor-detail-modal-energy-bar"
+          }
+        />
+      );
+      filledClassName = "";
+    }
+    return energyBars;
+  }
+
   return (
     <div className="armor-detail-modal item-info">
       <div className="armor-detail-modal-energy-types">
@@ -61,6 +87,9 @@ function ArmorDetailsModal({
           />
         ))}
       </div>
+      <div className="armor-detail-modal-energy-bar-container">
+        {renderEnergyBars()}
+      </div>
       {details.mods.map((modSlot, slotIndex) => (
         <div
           key={slotIndex}
@@ -73,7 +102,7 @@ function ArmorDetailsModal({
               src={`https://www.bungie.net${mod.icon}`}
               className={getModClassName(mod.name, slotIndex)}
               alt=""
-              onClick={e => equipArmorMod(e, mod, armorSlot)}
+              onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
             />
           ))}
           {equippedEnergyType === "arc" &&
@@ -83,7 +112,7 @@ function ArmorDetailsModal({
                 src={`https://www.bungie.net${mod.icon}`}
                 className={getModClassName(mod.name, slotIndex)}
                 alt=""
-                onClick={e => equipArmorMod(e, mod, armorSlot)}
+                onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
               />
             ))}
           {equippedEnergyType === "solar" &&
@@ -93,7 +122,7 @@ function ArmorDetailsModal({
                 src={`https://www.bungie.net${mod.icon}`}
                 className={getModClassName(mod.name, slotIndex)}
                 alt=""
-                onClick={e => equipArmorMod(e, mod, armorSlot)}
+                onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
               />
             ))}
           {equippedEnergyType === "void" &&
@@ -103,7 +132,7 @@ function ArmorDetailsModal({
                 src={`https://www.bungie.net${mod.icon}`}
                 className={getModClassName(mod.name, slotIndex)}
                 alt=""
-                onClick={e => equipArmorMod(e, mod, armorSlot)}
+                onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
               />
             ))}
         </div>
@@ -113,10 +142,10 @@ function ArmorDetailsModal({
           Armor Stats
         </Link>
         <Link className="armor-detail-modal-link" to="">
-          Mod Effect Stacking
+          Mod Stacking
         </Link>
         <Link className="armor-detail-modal-link" to="">
-          Activity Mod Slot Info
+          Activity Mod Slots
         </Link>
       </div>
     </div>

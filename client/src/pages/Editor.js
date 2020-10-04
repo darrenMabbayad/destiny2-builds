@@ -48,6 +48,7 @@ function Editor() {
   const [showArmorDetails, setShowArmorDetails] = useState(false);
   const [itemToChange, setItemToChange] = useState("");
   const [itemToSearch, setItemToSearch] = useState("");
+  const [currentEnergyCost, setCurrentEnergyCost] = useState(0);
   const [hoveredItem, setHoveredItem] = useState({});
   const weaponRegex = /(kinetic)|(special)|(power)/;
   const armorRegex = /(helmet)|(gloves)|(chest)|(boots)|(classItem)/;
@@ -190,31 +191,55 @@ function Editor() {
     setBuildToSave({ ...buildToSave, weapons: newWeapons });
   }
 
-  function equipArmorMod(e, mod, armorSlot) {
-    const { parentElement } = e.target;
-    const newArmor = buildToSave.armor;
-    const modToEquip = {
-      name: mod.name,
-      description: mod.description,
-      icon: mod.icon,
-    };
-    const emptyModSlot = {
-      name: "",
-      description: "",
-      icon: "",
-    };
-    newArmor[armorSlot].mods[parentElement.id] = modToEquip;
-    for (let i = 0; i < newArmor[armorSlot].mods.length; i++) {
-      if (!(i in newArmor[armorSlot].mods)) {
-        newArmor[armorSlot].mods[i] = emptyModSlot;
+  function equipArmorMod(e, mod, armorSlot, slotIndex) {
+    if (checkModEnergyCost(mod.energyCost, armorSlot, slotIndex)) {
+      const { parentElement } = e.target;
+      const newArmor = buildToSave.armor;
+      const modToEquip = {
+        name: mod.name,
+        description: mod.description,
+        icon: mod.icon,
+        energyCost: mod.energyCost,
+      };
+      const emptyModSlot = {
+        name: "",
+        description: "",
+        icon: "",
+        energyCost: 0,
+      };
+      newArmor[armorSlot].mods[parentElement.id] = modToEquip;
+      for (let i = 0; i < newArmor[armorSlot].mods.length; i++) {
+        if (!(i in newArmor[armorSlot].mods)) {
+          newArmor[armorSlot].mods[i] = emptyModSlot;
+        }
       }
+      setBuildToSave({ ...buildToSave, armor: newArmor });
     }
-    setBuildToSave({ ...buildToSave, armor: newArmor });
+  }
+
+  function checkModEnergyCost(energyCost, armorSlot, slotIndex) {
+    const armorToCheck = buildToSave.armor[armorSlot].mods;
+    let totalEnergyCost = 0;
+    armorToCheck.forEach((mod, index) => {
+      if (index !== slotIndex) {
+        totalEnergyCost += mod.energyCost;
+      }
+    });
+    totalEnergyCost += energyCost;
+    if (totalEnergyCost <= 10) {
+      setCurrentEnergyCost(totalEnergyCost);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   function equipArmorEnergyType(energyType, armorSlot) {
     const newArmor = buildToSave.armor;
     newArmor[armorSlot].energyType = energyType;
+    // clear mods when picking a new energy type
+    setCurrentEnergyCost(0);
+    newArmor[armorSlot].mods = [];
     setBuildToSave({ ...buildToSave, armor: newArmor });
   }
 
@@ -319,6 +344,7 @@ function Editor() {
             details={hoveredItem}
             equipArmorMod={equipArmorMod}
             equipArmorEnergyType={equipArmorEnergyType}
+            currentEnergyCost={currentEnergyCost}
           />,
           document.getElementById("modal-root")
         )}

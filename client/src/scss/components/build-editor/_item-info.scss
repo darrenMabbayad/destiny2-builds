@@ -130,14 +130,34 @@
 
     &-energy-types {
       display: flex;
-      display: "flex";
-      justify-content: space-evenly;
       align-items: center;
       margin-bottom: 1em;
 
+      & > :not(:last-child) {
+        margin-right: 1em;
+      }
+
       img {
-        width: 65px;
+        width: 50px;
         cursor: pointer;
+      }
+    }
+
+    &-energy-bar {
+      height: 7px;
+      width: 30px;
+      background: white;
+
+      &-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1em;
+        border: solid lightgrey 2px;
+        padding: 0.25em 0.5em;
+
+        & > :not(:last-child) {
+          margin-right: 0.5em;
+        }
       }
     }
 
@@ -162,4 +182,28 @@
       display: block;
     }
   }
+}
+
+.generic-energy-filled,
+.arc-energy-filled,
+.solar-energy-filled,
+.void-energy-filled {
+  height: 10px;
+  width: 33px;
+}
+
+.generic-energy-filled {
+  background: black;
+}
+
+.arc-energy-filled {
+  background: black;
+}
+
+.solar-energy-filled {
+  background: orange;
+}
+
+.void-energy-filled {
+  background: purple;
 }

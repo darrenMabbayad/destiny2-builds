@@ -213,7 +213,13 @@ function getArmorMods(manifest, item) {
     };
     slot.forEach(mod => {
       energyType = checkModEnergyType(mod);
-      modsByElementType[energyType].push(mod.displayProperties);
+      const modToAdd = {
+        ...mod.displayProperties,
+        energyCost:
+          mod.plug.hasOwnProperty("energyCost") &&
+          mod.plug.energyCost.energyCost,
+      };
+      modsByElementType[energyType].push(modToAdd);
     });
     allModsBySlotType.push(modsByElementType);
   });
