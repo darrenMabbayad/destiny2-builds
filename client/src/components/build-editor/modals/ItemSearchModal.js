@@ -22,7 +22,6 @@ function ItemSearchModal({
       for (const element of preparedList[property]) {
         if (queryRegex.test(element.displayProperties.name)) {
           result.push(element);
-          break;
         }
       }
     }

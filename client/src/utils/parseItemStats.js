@@ -15,7 +15,6 @@ export default function parseItemStats(manifest, item, itemType) {
       perks: weaponPerks,
       mods: weaponMods,
     };
-    console.log(weaponDetails.mods);
     return weaponDetails;
   } else if (armorRegex.test(itemType)) {
     const armorMods = getArmorMods(manifest, item);
@@ -130,10 +129,15 @@ function getWeaponModSocket(manifest, item) {
         modSockets.masterwork =
           manifest.plugSets[entry.reusablePlugSetHash].reusablePlugItems;
       } else if (socketType === "Masterwork") {
-        // in the case of pinnacle/ritual class weapons, there is only 1 masterwork
-        modSockets.masterwork.push(
-          manifest.inventoryItems[entry.singleInitialItemHash].displayProperties
-        );
+        if (entry.reusablePlugItems.length === 0) {
+          // in the case of pinnacle/ritual class weapons, there is only 1 masterwork
+          modSockets.masterwork.push(
+            manifest.inventoryItems[entry.singleInitialItemHash]
+          );
+        } else {
+          modSockets.masterwork =
+            manifest.plugSets[entry.reusablePlugSetHash].reusablePlugItems;
+        }
       } else if (catalystRegex.test(socketType)) {
         // this only applies to exotic weapons
         // push the empty mod socket
@@ -173,20 +177,80 @@ function getWeaponModSocket(manifest, item) {
     // only applies to exotic weapons
     equippableMods = modSockets.mods;
   }
-  let masterworkChoices = [];
+  let masterworkList = [];
   if (modSockets.masterwork.length > 1) {
     for (const entry of modSockets.masterwork) {
       const socketType =
-        manifest.inventoryItems[entry.plugItemHash].displayProperties;
-      if (socketType.name === "Masterwork") {
-        masterworkChoices.push(socketType);
+        manifest.inventoryItems[entry.plugItemHash].displayProperties.name;
+      if (socketType === "Masterwork") {
+        masterworkList.push(manifest.inventoryItems[entry.plugItemHash]);
       }
     }
   } else {
     // only applies to pinnacle/ritual weapons, exotics will be an empty array
-    masterworkChoices = modSockets.masterwork;
+    masterworkList = modSockets.masterwork;
   }
+  const masterworkChoices = filterMasterworksList(
+    manifest,
+    masterworkList,
+    item
+  );
   return { equippableMods, masterworkChoices };
+}
+
+function filterMasterworksList(manifest, list, item) {
+  const weaponType = item.itemTypeDisplayName;
+  const gunRegex = /(Scout Rifle)|(Auto Rifle)|(Pulse Rifle)|(Sniper Rifle)|(Hand Cannon)|(Shotgun)|(Sidearm)|(Machine Gun)|(Submachine Gun)|(Trace Rifle)/;
+  const fusionRegex = /(Fusion Rifle)|(Linear Fusion Rifle)/;
+  const swordRegex = /(Sword)/;
+  const explosiveRegex = /(Rocket Launcher)|(Grenade Launcher)/;
+  const bowRegex = /(Combat Bow)/;
+  const gunMasterworkRegex = /(Range)|(Stability)|(Reload Speed)|(Handling)/;
+  const fusionMasterworkRegex = /(Range)|(Stability)|(Reload Speed)|(Handling)|(Charge Time)/;
+  const swordMasterworkRegex = /(Impact)/;
+  const explosiveMasterworkRegex = /(Range)|(Stability)|(Reload Speed)|(Handling)|(Blast Radius)|(Velocity)/;
+  const bowMasterworkRegex = /(Range)|(Stability)|(Reload Speed)|(Handling)|(Accuracy)|(Draw Time)/;
+  let filteredMasterworks = [];
+  if (gunRegex.test(weaponType)) {
+    filteredMasterworks = list.filter(masterwork => {
+      return gunMasterworkRegex.test(
+        manifest.destinyStats[masterwork.investmentStats[0].statTypeHash]
+          .displayProperties.name
+      );
+    });
+  } else if (fusionRegex.test(weaponType)) {
+    filteredMasterworks = list.filter(masterwork => {
+      return fusionMasterworkRegex.test(
+        manifest.destinyStats[masterwork.investmentStats[0].statTypeHash]
+          .displayProperties.name
+      );
+    });
+  } else if (swordRegex.test(weaponType)) {
+    filteredMasterworks = list.filter(masterwork => {
+      return swordMasterworkRegex.test(
+        manifest.destinyStats[masterwork.investmentStats[0].statTypeHash]
+          .displayProperties.name
+      );
+    });
+  } else if (explosiveRegex.test(weaponType)) {
+    filteredMasterworks = list.filter(masterwork => {
+      return explosiveMasterworkRegex.test(
+        manifest.destinyStats[masterwork.investmentStats[0].statTypeHash]
+          .displayProperties.name
+      );
+    });
+  } else if (bowRegex.test(weaponType)) {
+    filteredMasterworks = list.filter(masterwork => {
+      return bowMasterworkRegex.test(
+        manifest.destinyStats[masterwork.investmentStats[0].statTypeHash]
+          .displayProperties.name
+      );
+    });
+  } else return null;
+  const newMasterworkList = filteredMasterworks.map(
+    masterwork => masterwork.displayProperties
+  );
+  return newMasterworkList;
 }
 
 function getWeaponStats(manifest, item) {
