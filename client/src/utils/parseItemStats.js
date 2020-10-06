@@ -152,8 +152,14 @@ function getWeaponModSocket(manifest, item) {
       if (mod.perks.length >= 1) {
         for (const perk of mod.perks) {
           if (manifest.sandboxPerks[perk.perkHash].isDisplayable) {
-            modSandboxPerk =
-              manifest.sandboxPerks[perk.perkHash].displayProperties;
+            const description =
+              manifest.sandboxPerks[perk.perkHash].displayProperties
+                .description;
+            const otherDisplayProperties = mod.displayProperties;
+            modSandboxPerk = {
+              ...otherDisplayProperties,
+              description,
+            };
           }
         }
       }
