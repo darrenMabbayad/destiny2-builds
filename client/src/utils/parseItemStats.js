@@ -7,12 +7,15 @@ export default function parseItemStats(manifest, item, itemType) {
     const weaponGeneralInfo = getGeneralInfo(manifest, item);
     const weaponStats = getWeaponStats(manifest, item);
     const weaponMods = getWeaponModSocket(manifest, item);
+    const weaponIntrinsicTrait = getWeaponIntrinsicTrait(manifest, item);
     const weaponDetails = {
       generalInfo: weaponGeneralInfo,
+      instrinsicTrait: weaponIntrinsicTrait,
       stats: weaponStats,
       perks: weaponPerks,
       mods: weaponMods,
     };
+    console.log(weaponDetails.mods);
     return weaponDetails;
   } else if (armorRegex.test(itemType)) {
     const armorMods = getArmorMods(manifest, item);
@@ -38,6 +41,26 @@ function getGeneralInfo(manifest, item) {
 }
 
 // ---------- START: WEAPON FUNCTIONS ----------//
+function getWeaponIntrinsicTrait(manifest, item) {
+  // 1) filter all socket entries by only looking for WEAPON PERKS entries
+  const filteredSocketEntries = item.sockets.socketCategories.filter(
+    category =>
+      manifest.socketCategories[category.socketCategoryHash].displayProperties
+        .name === "INTRINSIC TRAITS"
+  );
+  // 2) get a list of all the weapon perk plugs by index
+  const plugIndexes = new Set([...filteredSocketEntries[0].socketIndexes]);
+  const plugList = item.sockets.socketEntries.filter((entry, index) =>
+    plugIndexes.has(index)
+  );
+  const intrinsicTrait = [];
+  plugList.forEach(plug => {
+    intrinsicTrait.push(
+      manifest.inventoryItems[plug.singleInitialItemHash].displayProperties
+    );
+  });
+  return intrinsicTrait;
+}
 function getWeaponPerks(manifest, item) {
   // 1) filter all socket entries by only looking for WEAPON PERKS entries
   const filteredSocketEntries = item.sockets.socketCategories.filter(
@@ -113,6 +136,7 @@ function getWeaponModSocket(manifest, item) {
         );
       } else if (catalystRegex.test(socketType)) {
         // this only applies to exotic weapons
+        // push the empty mod socket
         modSockets.mods.push(
           manifest.inventoryItems[entry.singleInitialItemHash].displayProperties
         );
@@ -122,7 +146,22 @@ function getWeaponModSocket(manifest, item) {
   let equippableMods = [];
   if (modSockets.mods.length > 1) {
     equippableMods = modSockets.mods.map(item => {
-      return manifest.inventoryItems[item.plugItemHash].displayProperties;
+      const mod = manifest.inventoryItems[item.plugItemHash];
+      const modDisplayProperties = mod.displayProperties;
+      let modSandboxPerk = {};
+      if (mod.perks.length >= 1) {
+        for (const perk of mod.perks) {
+          if (manifest.sandboxPerks[perk.perkHash].isDisplayable) {
+            modSandboxPerk =
+              manifest.sandboxPerks[perk.perkHash].displayProperties;
+          }
+        }
+      }
+      const modToPush = {
+        ...modDisplayProperties,
+        ...modSandboxPerk,
+      };
+      return modToPush;
     });
   } else {
     // only applies to exotic weapons

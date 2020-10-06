@@ -13,6 +13,7 @@ function DestinyContextProvider({ children }) {
   const [socketCategories, setSocketCategories] = useState({});
   const [plugSets, setPlugSets] = useState({});
   const [destinyStats, setDestinyStats] = useState({});
+  const [sandboxPerks, setSandboxPerks] = useState({});
 
   const manifest = {
     inventoryItems,
@@ -21,6 +22,7 @@ function DestinyContextProvider({ children }) {
     socketCategories,
     plugSets,
     destinyStats,
+    sandboxPerks,
   };
 
   const itemTierRegex = /(Legendary)|(Exotic)/;
@@ -46,6 +48,7 @@ function DestinyContextProvider({ children }) {
         setItemCategories(res.data.DestinyItemCategoryDefinition);
         setPlugSets(res.data.DestinyPlugSetDefinition);
         setDestinyStats(res.data.DestinyStatDefinition);
+        setSandboxPerks(res.data.DestinySandboxPerkDefinition);
         // Log performance
         TIME_END = performance.now();
         console.log(
