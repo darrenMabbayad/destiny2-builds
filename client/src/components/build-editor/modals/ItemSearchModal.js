@@ -1,39 +1,32 @@
 import React, { useState, useContext } from "react";
 import { DestinyContext } from "../../../context/DestinyContext";
 import FormInput from "../FormInput";
-import checkArmorSlot from "../../../utils/checkArmorSlot";
-import checkWeaponSlot from "../../../utils/checkWeaponSlot";
 
 function ItemSearchModal({
   toggleItemSearch,
   itemToSearch,
   handleChange,
-  searchItem,
   itemToChange,
   changeItem,
 }) {
   const [searchResults, setSearchResults] = useState([]);
-  const { manifest } = useContext(DestinyContext);
+  const { searchResults: preparedList } = useContext(DestinyContext);
   const weaponRegex = /(kinetic)|(special)|(power)/;
   const armorRegex = /(helmet)|(gloves)|(chest)|(boots)|(classItem)/;
 
-  async function searchItemAndRenderList(e, query) {
+  function searchItemFromPreparedList(e, query) {
     e.preventDefault();
-    let res = await searchItem(query);
-    const items = res.Response.results.results.map(
-      result => manifest.DestinyInventoryItemDefinition[result.hash]
-    );
-    let filteredItems = [];
-    if (weaponRegex.test(itemToChange)) {
-      filteredItems = items.filter(item =>
-        item.hasOwnProperty("collectibleHash")
-      );
-    } else if (armorRegex.test(itemToChange)) {
-      filteredItems = items.filter(
-        item => !item.hasOwnProperty("collectibleHash")
-      );
+    let queryRegex = new RegExp(query, "i");
+    let result = [];
+    for (const property in preparedList) {
+      for (const element of preparedList[property]) {
+        if (queryRegex.test(element.displayProperties.name)) {
+          result.push(element);
+          break;
+        }
+      }
     }
-    setSearchResults(filteredItems);
+    setSearchResults(result);
   }
 
   function closeModal(e) {
@@ -42,43 +35,34 @@ function ItemSearchModal({
   }
 
   function changeItemAndCloseModal(e, item) {
-    let error = "";
+    let selectedItem = {};
     if (weaponRegex.test(itemToChange)) {
-      error = checkWeaponSlot(manifest, itemToChange, item);
+      selectedItem = {
+        name: item.displayProperties.name,
+        icon: `http://www.bungie.net/${item.displayProperties.icon}`,
+        itemHash: item.hash,
+        perks: [],
+        mod: { name: "", description: "", icon: "" },
+        masterwork: { name: "", description: "", icon: "" },
+      };
     } else if (armorRegex.test(itemToChange)) {
-      error = checkArmorSlot(manifest, itemToChange, item);
+      selectedItem = {
+        name: item.displayProperties.name,
+        icon: `http://www.bungie.net/${item.displayProperties.icon}`,
+        itemHash: item.hash,
+        mods: [],
+        energyType: "",
+      };
     }
-
-    if (!error) {
-      let selectedItem = {};
-      if (weaponRegex.test(itemToChange)) {
-        selectedItem = {
-          name: item.displayProperties.name,
-          icon: `http://www.bungie.net/${item.displayProperties.icon}`,
-          itemHash: item.hash,
-          perks: [],
-          mod: { name: "", description: "", icon: "" },
-          masterwork: { name: "", description: "", icon: "" },
-        };
-      } else if (armorRegex.test(itemToChange)) {
-        selectedItem = {
-          name: item.displayProperties.name,
-          icon: `http://www.bungie.net/${item.displayProperties.icon}`,
-          itemHash: item.hash,
-          mods: [],
-          energyType: "",
-        };
-      }
-      changeItem(e, selectedItem, itemToChange);
-      closeModal(e);
-    }
+    changeItem(e, selectedItem, itemToChange);
+    closeModal(e);
   }
 
   return (
     <>
       <div className="item-search-overlay" onClick={e => closeModal(e)} />
       <div className="item-search-modal">
-        <form onSubmit={e => searchItemAndRenderList(e, itemToSearch)}>
+        <form onSubmit={e => searchItemFromPreparedList(e, itemToSearch)}>
           <FormInput
             label="Item Finder"
             name="search-query"
@@ -87,7 +71,7 @@ function ItemSearchModal({
             handleChange={handleChange}
           />
         </form>
-        <button onClick={e => searchItemAndRenderList(e, itemToSearch)}>
+        <button onClick={e => searchItemFromPreparedList(e, itemToSearch)}>
           Search
         </button>
         {searchResults && (

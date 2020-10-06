@@ -21,21 +21,4 @@ router.get("/manifest", async (req, res) => {
     });
 });
 
-// Search an item's information from Bungie API
-router.post("/items", (req, res) => {
-  axios({
-    method: "get",
-    url: `https://www.bungie.net/Platform/Destiny2/Armory/Search/${type}/${req.body.query}/`,
-    headers: {
-      "x-api-key": process.env.BUNGIE_API_KEY,
-    },
-  })
-    .then(response => {
-      res.send(response.data);
-    })
-    .catch(e => {
-      console.error(e);
-    });
-});
-
 module.exports = router;

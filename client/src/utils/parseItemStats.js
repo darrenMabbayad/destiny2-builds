@@ -28,8 +28,7 @@ export default function parseItemStats(manifest, item, itemType) {
 function getGeneralInfo(manifest, item) {
   // Get generic info right from the item object itself
   const slotHash = item.equippingBlock.equipmentSlotTypeHash;
-  const slotType =
-    manifest.DestinyEquipmentSlotDefinition[slotHash].displayProperties.name;
+  const slotType = manifest.equipmentSlots[slotHash].displayProperties.name;
   const itemInfo = {
     itemType: item.itemTypeDisplayName,
     itemTier: item.itemTypeAndTierDisplayName,
@@ -43,8 +42,8 @@ function getWeaponPerks(manifest, item) {
   // 1) filter all socket entries by only looking for WEAPON PERKS entries
   const filteredSocketEntries = item.sockets.socketCategories.filter(
     category =>
-      manifest.DestinySocketCategoryDefinition[category.socketCategoryHash]
-        .displayProperties.name === "WEAPON PERKS"
+      manifest.socketCategories[category.socketCategoryHash].displayProperties
+        .name === "WEAPON PERKS"
   );
   // 2) get a list of all the weapon perk plugs by index
   const plugIndexes = new Set([...filteredSocketEntries[0].socketIndexes]);
@@ -54,19 +53,16 @@ function getWeaponPerks(manifest, item) {
   // 3) get a list of all possible perks for each plug
   const perkSlotList = plugList.map(plug => {
     if (plug.hasOwnProperty("randomizedPlugSetHash")) {
-      return manifest.DestinyPlugSetDefinition[plug.randomizedPlugSetHash]
-        .reusablePlugItems;
+      return manifest.plugSets[plug.randomizedPlugSetHash].reusablePlugItems;
     } else if (plug.hasOwnProperty("reusablePlugSetHash")) {
-      return manifest.DestinyPlugSetDefinition[plug.reusablePlugSetHash]
-        .reusablePlugItems;
+      return manifest.plugSets[plug.reusablePlugSetHash].reusablePlugItems;
     } else return null;
   });
   //4) get all the display information for each perk for a specific plug
   const specificSlotPerks = [];
   perkSlotList.forEach(slot => {
     const perks = slot.map(entry => {
-      return manifest.DestinyInventoryItemDefinition[entry.plugItemHash]
-        .displayProperties;
+      return manifest.inventoryItems[entry.plugItemHash].displayProperties;
     });
     specificSlotPerks.push(perks);
   });
@@ -77,8 +73,8 @@ function getWeaponModSocket(manifest, item) {
   // 1) filter all socket entries by only looking for WEAPON MODS entries
   const filteredSocketEntries = item.sockets.socketCategories.filter(
     category =>
-      manifest.DestinySocketCategoryDefinition[category.socketCategoryHash]
-        .displayProperties.name === "WEAPON MODS"
+      manifest.socketCategories[category.socketCategoryHash].displayProperties
+        .name === "WEAPON MODS"
   );
   // 2) get a list of all the weapon mod plugs by index
   const plugIndexes = new Set([...filteredSocketEntries[0].socketIndexes]);
@@ -98,35 +94,27 @@ function getWeaponModSocket(manifest, item) {
   for (const entry of modSocketEntries) {
     if (!entry.singleInitialItemHash) {
       modSockets.masterwork =
-        manifest.DestinyPlugSetDefinition[
-          entry.reusablePlugSetHash
-        ].reusablePlugItems;
+        manifest.plugSets[entry.reusablePlugSetHash].reusablePlugItems;
     } else {
       const socketType =
-        manifest.DestinyInventoryItemDefinition[entry.singleInitialItemHash]
-          .displayProperties.name;
+        manifest.inventoryItems[entry.singleInitialItemHash].displayProperties
+          .name;
       const catalystRegex = /Catalyst/;
       if (socketType === "Empty Mod Socket") {
         modSockets.mods =
-          manifest.DestinyPlugSetDefinition[
-            entry.reusablePlugSetHash
-          ].reusablePlugItems;
+          manifest.plugSets[entry.reusablePlugSetHash].reusablePlugItems;
       } else if (socketType === "Tier 1 Weapon") {
         modSockets.masterwork =
-          manifest.DestinyPlugSetDefinition[
-            entry.reusablePlugSetHash
-          ].reusablePlugItems;
+          manifest.plugSets[entry.reusablePlugSetHash].reusablePlugItems;
       } else if (socketType === "Masterwork") {
         // in the case of pinnacle/ritual class weapons, there is only 1 masterwork
         modSockets.masterwork.push(
-          manifest.DestinyInventoryItemDefinition[entry.singleInitialItemHash]
-            .displayProperties
+          manifest.inventoryItems[entry.singleInitialItemHash].displayProperties
         );
       } else if (catalystRegex.test(socketType)) {
         // this only applies to exotic weapons
         modSockets.mods.push(
-          manifest.DestinyInventoryItemDefinition[entry.singleInitialItemHash]
-            .displayProperties
+          manifest.inventoryItems[entry.singleInitialItemHash].displayProperties
         );
       }
     }
@@ -134,8 +122,7 @@ function getWeaponModSocket(manifest, item) {
   let equippableMods = [];
   if (modSockets.mods.length > 1) {
     equippableMods = modSockets.mods.map(item => {
-      return manifest.DestinyInventoryItemDefinition[item.plugItemHash]
-        .displayProperties;
+      return manifest.inventoryItems[item.plugItemHash].displayProperties;
     });
   } else {
     // only applies to exotic weapons
@@ -145,8 +132,7 @@ function getWeaponModSocket(manifest, item) {
   if (modSockets.masterwork.length > 1) {
     for (const entry of modSockets.masterwork) {
       const socketType =
-        manifest.DestinyInventoryItemDefinition[entry.plugItemHash]
-          .displayProperties;
+        manifest.inventoryItems[entry.plugItemHash].displayProperties;
       if (socketType.name === "Masterwork") {
         masterworkChoices.push(socketType);
       }
@@ -163,7 +149,7 @@ function getWeaponStats(manifest, item) {
   const weaponStats = [];
   for (const [key, value] of Object.entries(item.stats.stats)) {
     const stat = {
-      label: manifest.DestinyStatDefinition[key].displayProperties.name,
+      label: manifest.destinyStats[key].displayProperties.name,
       value: value.value,
     };
     weaponStats.push(stat);
@@ -177,8 +163,8 @@ function getArmorMods(manifest, item) {
   // 1) filter all socket entries by only looking for ARMOR MODS entries
   const filteredSocketEntries = item.sockets.socketCategories.filter(
     category =>
-      manifest.DestinySocketCategoryDefinition[category.socketCategoryHash]
-        .displayProperties.name === "ARMOR MODS"
+      manifest.socketCategories[category.socketCategoryHash].displayProperties
+        .name === "ARMOR MODS"
   );
   // 2) filter item.socket.socketEntries and return only indexes with ARMOR MODS
   const plugIndexes = new Set([...filteredSocketEntries[0].socketIndexes]);
@@ -189,15 +175,14 @@ function getArmorMods(manifest, item) {
   const specificSlotMods = [];
   plugList.forEach(slot => {
     specificSlotMods.push(
-      manifest.DestinyPlugSetDefinition[slot.reusablePlugSetHash]
-        .reusablePlugItems
+      manifest.plugSets[slot.reusablePlugSetHash].reusablePlugItems
     );
   });
   // 4) for each individual mod slot (each array index contains a list of mods), get a list of all mods available for that slot
   let mods = [];
   specificSlotMods.forEach(slot => {
     const modList = slot.map(mod => {
-      return manifest.DestinyInventoryItemDefinition[mod.plugItemHash];
+      return manifest.inventoryItems[mod.plugItemHash];
     });
     mods.push(modList);
   });

@@ -144,15 +144,22 @@ function ArmorDetailsModal({
         </div>
       ))}
       <div className="armor-detail-modal-links">
-        <Link className="armor-detail-modal-link" to="">
-          Armor Stats
-        </Link>
-        <Link className="armor-detail-modal-link" to="">
-          Mod Stacking
-        </Link>
-        <Link className="armor-detail-modal-link" to="">
-          Activity Mod Slots
-        </Link>
+        <div className="armor-detail-modal-links-container">
+          <Link className="armor-detail-modal-link" to="">
+            Armor Stats
+          </Link>
+          <Link className="armor-detail-modal-link" to="">
+            Gear Sunsetting
+          </Link>
+        </div>
+        <div className="armor-detail-modal-links-container">
+          <Link className="armor-detail-modal-link" to="">
+            Mod Stacking
+          </Link>
+          <Link className="armor-detail-modal-link" to="">
+            Activity Mod Slots
+          </Link>
+        </div>
       </div>
     </div>
   );

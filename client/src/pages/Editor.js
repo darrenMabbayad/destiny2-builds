@@ -19,12 +19,13 @@ import {
   updateBuild,
   fetchBuild,
 } from "../utils/loadout";
-import { queryDestinyApi } from "../utils/destiny2";
 import parseItemStats from "../utils/parseItemStats";
 
 function Editor() {
   // Initialize a build object to save/edit
-  const { manifest } = useContext(DestinyContext);
+  const { getInventoryItemsByEquipmentSlot, manifest } = useContext(
+    DestinyContext
+  );
   const location = useLocation();
   const buildToEdit =
     location.state !== undefined ? location.state.buildId : null;
@@ -84,8 +85,29 @@ function Editor() {
 
   function toggleItemSearch(e) {
     e.stopPropagation();
+    const { id } = e.target;
+    let slotType = "";
+    if (id === "kinetic") {
+      slotType = "Kinetic Weapons";
+    } else if (id === "special") {
+      slotType = "Energy Weapons";
+    } else if (id === "power") {
+      slotType = "Power Weapons";
+    } else if (id === "helmet") {
+      slotType = "Helmet";
+    } else if (id === "gloves") {
+      slotType = "Gauntlets";
+    } else if (id === "chest") {
+      slotType = "Chest Armor";
+    } else if (id === "boots") {
+      slotType = "Leg Armor";
+    } else if (id === "classItem") {
+      slotType = "Class Armor";
+    } else slotType = "";
+
+    getInventoryItemsByEquipmentSlot(slotType);
     setShowItemSearch(prevState => !prevState);
-    if (e.target.id) setItemToChange(e.target.id);
+    if (id) setItemToChange(id);
     else setItemToChange("");
     if (!showItemSearch) setItemToSearch("");
   }
@@ -100,7 +122,7 @@ function Editor() {
   }
 
   function displayItemDetails(itemHash, itemType) {
-    const item = manifest.DestinyInventoryItemDefinition[itemHash];
+    const item = manifest.inventoryItems[itemHash];
     const itemDetails = parseItemStats(manifest, item, itemType);
     if (weaponRegex.test(itemType)) {
       setHoveredItem(itemDetails);
@@ -111,12 +133,6 @@ function Editor() {
     }
   }
   // ------------- END: Modal Toggles -------------- //
-
-  async function searchItem(query) {
-    const res = await queryDestinyApi(query);
-    setItemToSearch("");
-    return res;
-  }
 
   function changeItem(e, item, itemType) {
     e.stopPropagation();
@@ -320,7 +336,6 @@ function Editor() {
             toggleItemSearch={toggleItemSearch}
             itemToSearch={itemToSearch}
             handleChange={handleChange}
-            searchItem={searchItem}
             itemToChange={itemToChange}
             changeItem={changeItem}
           />,

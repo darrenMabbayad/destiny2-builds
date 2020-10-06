@@ -11,6 +11,8 @@
     border-radius: 5px;
     padding: 1em;
     width: 400px;
+    height: 600px;
+    overflow-y: scroll;
 
     &-info {
       display: grid;
@@ -56,6 +58,7 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
         gap: 0.25em;
+        margin-bottom: 1em;
 
         img {
           width: 35px;
@@ -174,6 +177,11 @@
     }
 
     &-links {
+      &-container {
+        display: flex;
+        justify-content: space-between;
+      }
+
       & > :not(:last-child) {
         margin-bottom: 0.5em;
       }

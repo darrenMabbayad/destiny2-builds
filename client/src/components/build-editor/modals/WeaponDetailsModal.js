@@ -57,7 +57,8 @@ function WeaponDetailsModal({
   }
 
   function getMasterworkClassName(masterwork) {
-    if (equippedMasterwork.name === masterwork) return "masterwork-equipped";
+    if (equippedMasterwork.icon === masterwork.icon)
+      return "masterwork-equipped";
     else return null;
   }
 
@@ -131,7 +132,7 @@ function WeaponDetailsModal({
             <img
               key={index}
               id={masterwork.name}
-              className={getMasterworkClassName(masterwork.name)}
+              className={getMasterworkClassName(masterwork)}
               src={`https://www.bungie.net${masterwork.icon}`}
               alt=""
               onClick={() => equipMasterwork(masterwork, weaponSlot)}
