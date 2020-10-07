@@ -9,8 +9,9 @@ export default function parseItemStats(manifest, item, itemType) {
     const weaponMods = getWeaponModSocket(manifest, item);
     const weaponIntrinsicTrait = getWeaponIntrinsicTrait(manifest, item);
     const weaponDetails = {
+      selectedSlot: itemType,
       generalInfo: weaponGeneralInfo,
-      instrinsicTrait: weaponIntrinsicTrait,
+      intrinsicTrait: weaponIntrinsicTrait,
       stats: weaponStats,
       perks: weaponPerks,
       mods: weaponMods,
@@ -20,6 +21,7 @@ export default function parseItemStats(manifest, item, itemType) {
     const armorMods = getArmorMods(manifest, item);
     const armorGeneralInfo = getGeneralInfo(manifest, item);
     const armorDetails = {
+      selectedSlot: itemType,
       generalInfo: armorGeneralInfo,
       mods: armorMods,
     };
@@ -32,6 +34,8 @@ function getGeneralInfo(manifest, item) {
   const slotHash = item.equippingBlock.equipmentSlotTypeHash;
   const slotType = manifest.equipmentSlots[slotHash].displayProperties.name;
   const itemInfo = {
+    itemName: item.displayProperties.name,
+    itemDescription: item.displayProperties.description,
     itemType: item.itemTypeDisplayName,
     itemTier: item.itemTypeAndTierDisplayName,
     itemSlot: slotType,

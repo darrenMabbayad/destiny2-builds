@@ -1,6 +1,7 @@
 import React from "react";
 
 function WeaponDetailsModal({
+  toggleItemInfo,
   currentWeapons,
   details,
   equipPerk,
@@ -63,84 +64,107 @@ function WeaponDetailsModal({
   }
 
   return (
-    <div className="weapon-detail-modal item-info">
-      <div className="weapon-detail-modal-stats">
-        <h3>Weapon Stats</h3>
-        {stats.general.map((stat, index) => (
-          <div key={index} className="weapon-detail-modal-info">
-            <p className="weapon-detail-stat-label">{stat.label}</p>
-            <p className="weapon-detail-stat-value">{stat.value}</p>
-            <div className="weapon-detail-stat-bar">
-              <div
-                className="weapon-detail-stat-bar-filler"
-                style={{ width: `${stat.value}%` }}
-              />
+    <>
+      <div
+        id={details.selectedSlot}
+        className="weapon-detail-overlay"
+        onClick={e => toggleItemInfo(e)}
+      />
+      <div className="weapon-detail-modal item-info">
+        <div className="weapon-detail-modal-general">
+          <div className="weapon-detail-modal-name-desc">
+            <h2>{details.generalInfo.itemName}</h2>
+            <p>{details.generalInfo.itemDescription}</p>
+          </div>
+          <div className="weapon-detail-modal-intrinsic">
+            <img
+              src={`https://www.bungie.net${details.intrinsicTrait[0].icon}`}
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="weapon-detail-modal-stats-container">
+          <div>
+            <div className="weapon-detail-modal-stats">
+              <h3>Weapon Stats</h3>
+              {stats.general.map((stat, index) => (
+                <div key={index} className="weapon-detail-modal-info">
+                  <p className="weapon-detail-stat-label">{stat.label}</p>
+                  <p className="weapon-detail-stat-value">{stat.value}</p>
+                  <div className="weapon-detail-stat-bar">
+                    <div
+                      className="weapon-detail-stat-bar-filler"
+                      style={{ width: `${stat.value}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="weapon-detail-modal-stats">
+              <h3>Hidden Stats</h3>
+              {stats.hidden.map((stat, index) => (
+                <div key={index} className="weapon-detail-modal-info">
+                  <p className="weapon-detail-stat-label">{stat.label}</p>
+                  <p className="weapon-detail-stat-value">{stat.value}</p>
+                  <div className="weapon-detail-stat-bar">
+                    <div
+                      className="weapon-detail-stat-bar-filler"
+                      style={{ width: `${stat.value}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-      <div className="weapon-detail-modal-stats">
-        <h3>Hidden Stats</h3>
-        {stats.hidden.map((stat, index) => (
-          <div key={index} className="weapon-detail-modal-info">
-            <p className="weapon-detail-stat-label">{stat.label}</p>
-            <p className="weapon-detail-stat-value">{stat.value}</p>
-            <div className="weapon-detail-stat-bar">
+          <div className="weapon-detail-modal-perks">
+            {details.perks.map((perkSlot, slotIndex) => (
               <div
-                className="weapon-detail-stat-bar-filler"
-                style={{ width: `${stat.value}%` }}
-              />
-            </div>
+                id={slotIndex}
+                className="weapon-detail-modal-perks-slot"
+                key={slotIndex}
+              >
+                {perkSlot.map((perk, index) => (
+                  <img
+                    key={index}
+                    id={perk.name}
+                    className={getPerkClassName(perk.name, slotIndex)}
+                    src={`https://www.bungie.net${perk.icon}`}
+                    alt=""
+                    onClick={e => equipPerk(e, perk, weaponSlot)}
+                  />
+                ))}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="weapon-detail-modal-perks">
-        {details.perks.map((perkSlot, slotIndex) => (
-          <div
-            id={slotIndex}
-            className="weapon-detail-modal-perks-slot"
-            key={slotIndex}
-          >
-            {perkSlot.map((perk, index) => (
+        </div>
+        <div className="weapon-detail-modal-mods">
+          <div className="weapon-detail-modal-mods-equippable">
+            {details.mods.equippableMods.map((mod, index) => (
               <img
                 key={index}
-                id={perk.name}
-                className={getPerkClassName(perk.name, slotIndex)}
-                src={`https://www.bungie.net${perk.icon}`}
+                id={mod.name}
+                className={getModClassName(mod.name)}
+                src={`https://www.bungie.net${mod.icon}`}
                 alt=""
-                onClick={e => equipPerk(e, perk, weaponSlot)}
+                onClick={() => equipMod(mod, weaponSlot)}
               />
             ))}
           </div>
-        ))}
-      </div>
-      <div className="weapon-detail-modal-mods">
-        <div className="weapon-detail-modal-mods-equippable">
-          {details.mods.equippableMods.map((mod, index) => (
-            <img
-              key={index}
-              id={mod.name}
-              className={getModClassName(mod.name)}
-              src={`https://www.bungie.net${mod.icon}`}
-              alt=""
-              onClick={() => equipMod(mod, weaponSlot)}
-            />
-          ))}
-        </div>
-        <div className="weapon-detail-modal-mods-masterwork">
-          {details.mods.masterworkChoices.map((masterwork, index) => (
-            <img
-              key={index}
-              id={masterwork.name}
-              className={getMasterworkClassName(masterwork)}
-              src={`https://www.bungie.net${masterwork.icon}`}
-              alt=""
-              onClick={() => equipMasterwork(masterwork, weaponSlot)}
-            />
-          ))}
+          <div className="weapon-detail-modal-mods-masterwork">
+            {details.mods.masterworkChoices.map((masterwork, index) => (
+              <img
+                key={index}
+                id={masterwork.name}
+                className={getMasterworkClassName(masterwork)}
+                src={`https://www.bungie.net${masterwork.icon}`}
+                alt=""
+                onClick={() => equipMasterwork(masterwork, weaponSlot)}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

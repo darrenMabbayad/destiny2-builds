@@ -251,6 +251,7 @@ function Editor() {
   }
 
   function equipArmorEnergyType(energyType, armorSlot) {
+    console.log(armorSlot);
     const newArmor = buildToSave.armor;
     newArmor[armorSlot].energyType = energyType;
     // clear mods when picking a new energy type
@@ -268,6 +269,7 @@ function Editor() {
             {weapons.map((weapon, index) => (
               <ItemFrame
                 key={index}
+                currentItems={buildToSave}
                 itemType={weapon}
                 img={buildToSave.weapons[weapon].icon}
                 toggleItemSearch={toggleItemSearch}
@@ -291,6 +293,7 @@ function Editor() {
               {armor.map((armor, index) => (
                 <ItemFrame
                   key={index}
+                  currentItems={buildToSave}
                   itemType={armor}
                   img={buildToSave.armor[armor].icon}
                   toggleItemSearch={toggleItemSearch}
@@ -344,6 +347,7 @@ function Editor() {
       {showWeaponDetails &&
         createPortal(
           <WeaponDetailsModal
+            toggleItemInfo={toggleItemInfo}
             currentWeapons={buildToSave.weapons}
             details={hoveredItem}
             equipPerk={equipPerk}
@@ -355,6 +359,7 @@ function Editor() {
       {showArmorDetails &&
         createPortal(
           <ArmorDetailsModal
+            toggleItemInfo={toggleItemInfo}
             currentArmor={buildToSave.armor}
             details={hoveredItem}
             equipArmorMod={equipArmorMod}

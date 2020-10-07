@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 function ArmorDetailsModal({
+  toggleItemInfo,
   details,
   currentArmor,
   equipArmorEnergyType,
@@ -75,93 +76,104 @@ function ArmorDetailsModal({
   }
 
   return (
-    <div className="armor-detail-modal item-info">
-      <div className="armor-detail-modal-energy-types">
-        {energyTypes.map((type, index) => (
-          <img
-            key={index}
-            className={getEnergyTypeClassName(type.label)}
-            src={type.icon}
-            alt=""
-            onClick={() => equipArmorEnergyType(type.label, armorSlot)}
-          />
-        ))}
-      </div>
+    <>
       <div
-        className={
-          equippedEnergyType
-            ? `armor-detail-modal-energy-bar-container ${equippedEnergyType}-energy-bar-container`
-            : "armor-detail-modal-energy-bar-container"
-        }
-      >
-        {renderEnergyBars()}
-      </div>
-      {details.mods.map((modSlot, slotIndex) => (
-        <div
-          key={slotIndex}
-          id={slotIndex}
-          className="armor-detail-modal-mod-slot"
-        >
-          {modSlot.any.map((mod, index) => (
+        id={details.selectedSlot}
+        className="weapon-detail-overlay"
+        onClick={e => toggleItemInfo(e)}
+      />
+      <div className="armor-detail-modal item-info">
+        <div className="armor-detail-modal-name-desc">
+          <h2>{details.generalInfo.itemName}</h2>
+          <p>{details.generalInfo.itemDescription}</p>
+        </div>
+        <div className="armor-detail-modal-energy-types">
+          {energyTypes.map((type, index) => (
             <img
               key={index}
-              src={`https://www.bungie.net${mod.icon}`}
-              className={getModClassName(mod.name, slotIndex)}
+              className={getEnergyTypeClassName(type.label)}
+              src={type.icon}
               alt=""
-              onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
+              onClick={() => equipArmorEnergyType(type.label, armorSlot)}
             />
           ))}
-          {equippedEnergyType === "arc" &&
-            modSlot.arc.map((mod, index) => (
-              <img
-                key={index}
-                src={`https://www.bungie.net${mod.icon}`}
-                className={getModClassName(mod.name, slotIndex)}
-                alt=""
-                onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
-              />
-            ))}
-          {equippedEnergyType === "solar" &&
-            modSlot.solar.map((mod, index) => (
-              <img
-                key={index}
-                src={`https://www.bungie.net${mod.icon}`}
-                className={getModClassName(mod.name, slotIndex)}
-                alt=""
-                onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
-              />
-            ))}
-          {equippedEnergyType === "void" &&
-            modSlot.void.map((mod, index) => (
-              <img
-                key={index}
-                src={`https://www.bungie.net${mod.icon}`}
-                className={getModClassName(mod.name, slotIndex)}
-                alt=""
-                onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
-              />
-            ))}
         </div>
-      ))}
-      <div className="armor-detail-modal-links">
-        <div className="armor-detail-modal-links-container">
-          <Link className="armor-detail-modal-link" to="">
-            Armor Stats
-          </Link>
-          <Link className="armor-detail-modal-link" to="">
-            Gear Sunsetting
-          </Link>
+        <div
+          className={
+            equippedEnergyType
+              ? `armor-detail-modal-energy-bar-container ${equippedEnergyType}-energy-bar-container`
+              : "armor-detail-modal-energy-bar-container"
+          }
+        >
+          {renderEnergyBars()}
         </div>
-        <div className="armor-detail-modal-links-container">
-          <Link className="armor-detail-modal-link" to="">
-            Mod Stacking
-          </Link>
-          <Link className="armor-detail-modal-link" to="">
-            Activity Mod Slots
-          </Link>
+        {details.mods.map((modSlot, slotIndex) => (
+          <div
+            key={slotIndex}
+            id={slotIndex}
+            className="armor-detail-modal-mod-slot"
+          >
+            {modSlot.any.map((mod, index) => (
+              <img
+                key={index}
+                src={`https://www.bungie.net${mod.icon}`}
+                className={getModClassName(mod.name, slotIndex)}
+                alt=""
+                onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
+              />
+            ))}
+            {equippedEnergyType === "arc" &&
+              modSlot.arc.map((mod, index) => (
+                <img
+                  key={index}
+                  src={`https://www.bungie.net${mod.icon}`}
+                  className={getModClassName(mod.name, slotIndex)}
+                  alt=""
+                  onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
+                />
+              ))}
+            {equippedEnergyType === "solar" &&
+              modSlot.solar.map((mod, index) => (
+                <img
+                  key={index}
+                  src={`https://www.bungie.net${mod.icon}`}
+                  className={getModClassName(mod.name, slotIndex)}
+                  alt=""
+                  onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
+                />
+              ))}
+            {equippedEnergyType === "void" &&
+              modSlot.void.map((mod, index) => (
+                <img
+                  key={index}
+                  src={`https://www.bungie.net${mod.icon}`}
+                  className={getModClassName(mod.name, slotIndex)}
+                  alt=""
+                  onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
+                />
+              ))}
+          </div>
+        ))}
+        <div className="armor-detail-modal-links">
+          <div className="armor-detail-modal-links-container">
+            <Link className="armor-detail-modal-link" to="">
+              Armor Stats
+            </Link>
+            <Link className="armor-detail-modal-link" to="">
+              Gear Sunsetting
+            </Link>
+          </div>
+          <div className="armor-detail-modal-links-container">
+            <Link className="armor-detail-modal-link" to="">
+              Mod Stacking
+            </Link>
+            <Link className="armor-detail-modal-link" to="">
+              Activity Mod Slots
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

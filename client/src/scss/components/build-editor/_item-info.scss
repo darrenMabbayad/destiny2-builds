@@ -6,23 +6,51 @@
 }
 
 .weapon-detail {
+  &-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
   &-modal {
     background: darkgray;
     border-radius: 5px;
     padding: 1em;
-    width: 400px;
-    height: 600px;
-    overflow-y: scroll;
+    width: 500px;
+
+    &-general {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1em;
+    }
+
+    &-name-desc {
+      width: 75%;
+    }
+
+    &-intrinsic {
+      width: 25%;
+      text-align: center;
+      img {
+        width: 50px;
+      }
+    }
 
     &-info {
       display: grid;
       grid-template-areas: "label value bar";
       grid-template-columns: 120px 30px 100px;
-      gap: 1em;
     }
 
     &-stats {
       margin-bottom: 1em;
+
+      &-container {
+        display: flex;
+      }
     }
 
     &-perks {
@@ -43,7 +71,7 @@
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-        width: 40px;
+        width: 32px;
 
         img {
           width: 100%;
@@ -58,7 +86,6 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
         gap: 0.25em;
-        margin-bottom: 1em;
 
         img {
           width: 35px;
@@ -70,7 +97,6 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
         gap: 0.25em;
-        margin-bottom: 1em;
       }
 
       &-equippable {
@@ -82,12 +108,12 @@
   &-stat {
     &-label {
       grid-area: label;
-      text-align: right;
+      text-align: left;
     }
 
     &-value {
       grid-area: value;
-      text-align: right;
+      text-align: left;
     }
 
     &-bar {
@@ -133,11 +159,24 @@
 }
 
 .armor-detail {
+  &-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
   &-modal {
     background: darkgrey;
     border-radius: 5px;
     padding: 1em;
-    width: 400px;
+    width: 500px;
+
+    &-name-desc {
+      margin-bottom: 1em;
+    }
 
     &-energy-types {
       display: flex;
@@ -165,6 +204,7 @@
         margin-bottom: 1em;
         border: solid lightgrey 2px;
         padding: 0.25em 0.5em;
+        width: max-content;
 
         & > :not(:last-child) {
           margin-right: 0.5em;

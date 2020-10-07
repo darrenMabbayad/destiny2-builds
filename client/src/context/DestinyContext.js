@@ -96,6 +96,7 @@ function DestinyContextProvider({ children }) {
   function checkSlotAndTier(item, slotTypeHash, selectedSlot) {
     // check if the armor corresponds to the selected loadout slot
     const isCorrespondingSlot =
+      item.itemTypeDisplayName === selectedSlot &&
       equipmentSlots[slotTypeHash].displayProperties.name === selectedSlot;
     // check if the item is a Legendary or Exotic item
     const isLegendaryOrExoticTier = itemTierRegex.test(
@@ -133,7 +134,28 @@ function DestinyContextProvider({ children }) {
             .name === "ARMOR MODS"
         );
       });
-      isArmorTwoPointOh = armorModSockets[0].socketIndexes.length > 2;
+      const armorPerks = item.sockets.socketCategories.filter(category => {
+        return (
+          socketCategories[category.socketCategoryHash].displayProperties
+            .name === "ARMOR PERKS"
+        );
+      });
+      const perkIndexes = new Set([...armorPerks[0].socketIndexes]);
+      const filteredSocketCategories = item.sockets.socketEntries.filter(
+        (entry, index) => perkIndexes.has(index)
+      );
+      let hasArmorPerks = false;
+      for (const entry of filteredSocketCategories) {
+        if (
+          entry.singleInitialItemHash &&
+          inventoryItems[entry.singleInitialItemHash].displayProperties.name
+        ) {
+          hasArmorPerks = true;
+          return;
+        }
+      }
+      isArmorTwoPointOh =
+        !hasArmorPerks && armorModSockets[0].socketIndexes.length > 2;
     }
     return isArmorTwoPointOh && isCorrectSlotAndTier;
   }
