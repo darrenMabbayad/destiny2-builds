@@ -57,6 +57,13 @@ const buildSchema = new Schema(
       intellect: { type: Number, required: true },
       strength: { type: Number, required: true },
     },
+    subClass: {
+      element: { type: String },
+      classSpecialty: { type: String },
+      movementMode: { type: String },
+      grenade: { type: String },
+      path: { type: String },
+    },
     weapons: {
       kinetic: weaponSchema,
       special: weaponSchema,

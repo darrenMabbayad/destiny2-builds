@@ -15,6 +15,7 @@ router.post("/add", (request, response) => {
   const name = request.body.name;
   const description = request.body.description;
   const selectedClass = request.body.selectedClass;
+  const subClass = request.body.subClass;
   const stats = request.body.stats;
   const weapons = request.body.weapons;
   const armor = request.body.armor;
@@ -22,6 +23,7 @@ router.post("/add", (request, response) => {
     name,
     description,
     selectedClass,
+    subClass,
     stats,
     weapons,
     armor,
@@ -54,6 +56,7 @@ router.post("/update/:id", (request, response) => {
       build.name = request.body.name;
       build.description = request.body.description;
       build.selectedClass = request.body.selectedClass;
+      build.subClass = request.body.subClass;
       build.stats = request.body.stats;
       build.weapons = request.body.weapons;
       build.armor = request.body.armor;

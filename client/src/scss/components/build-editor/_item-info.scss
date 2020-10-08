@@ -118,7 +118,7 @@
 
     &-bar {
       position: relative;
-      height: 10px;
+      height: 15px;
       width: 75px;
       border-radius: 2px;
       border: 1px solid black;
@@ -128,6 +128,7 @@
       &-filler {
         background: white;
         height: 100%;
+        border: none;
         border-radius: inherit;
       }
     }
