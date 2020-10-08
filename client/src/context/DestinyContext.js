@@ -100,9 +100,15 @@ function DestinyContextProvider({ children }) {
 
   function checkSlotAndTier(item, slotTypeHash, selectedSlot) {
     // check if the armor corresponds to the selected loadout slot
-    const isCorrespondingSlot =
-      item.itemTypeDisplayName === selectedSlot &&
-      equipmentSlots[slotTypeHash].displayProperties.name === selectedSlot;
+    let isCorrespondingSlot = false;
+    if (weaponSlotRegex.test(selectedSlot)) {
+      isCorrespondingSlot =
+        equipmentSlots[slotTypeHash].displayProperties.name === selectedSlot;
+    } else if (armorSlotRegex.test(selectedSlot)) {
+      isCorrespondingSlot =
+        item.itemTypeDisplayName === selectedSlot &&
+        equipmentSlots[slotTypeHash].displayProperties.name === selectedSlot;
+    }
     // check if the item is a Legendary or Exotic item
     const isLegendaryOrExoticTier = itemTierRegex.test(
       item.itemTypeAndTierDisplayName
@@ -128,8 +134,8 @@ function DestinyContextProvider({ children }) {
       selectedSlot
     );
     /*
-       check if the item is armor 2.0 (check if the number of mods slots is 3-4)
-       only check corresponding slot AND legendary/exotic items
+      check if the item is armor 2.0 (check if the number of mods slots is 3-4)
+      only check corresponding slot AND legendary/exotic items
     */
     let isArmorTwoPointOh = false;
     if (isCorrectSlotAndTier) {
@@ -153,7 +159,9 @@ function DestinyContextProvider({ children }) {
       for (const entry of filteredSocketCategories) {
         if (
           entry.singleInitialItemHash &&
-          inventoryItems[entry.singleInitialItemHash].displayProperties.name
+          inventoryItems[entry.singleInitialItemHash].displayProperties.name &&
+          inventoryItems[entry.singleInitialItemHash]
+            .itemTypeAndTierDisplayName !== "Exotic Intrinsic"
         ) {
           hasArmorPerks = true;
           return;
@@ -240,7 +248,7 @@ function DestinyContextProvider({ children }) {
       subclassToFind = "Warlock Subclass";
     } else if (titanRegex.test(selectedClass)) {
       subclassToFind = "Titan Subclass";
-    }
+    } else return;
     for (const key in inventoryItems) {
       if (inventoryItems[key].itemTypeDisplayName === subclassToFind) {
         subclassList.push(inventoryItems[key]);

@@ -81,22 +81,21 @@
       flex-direction: column;
       justify-content: space-evenly;
 
-      & > div {
+      &-skill {
         width: 50px;
         padding: 0.5em;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: solid black 1px;
+        border: solid rgba(0, 0, 0, 0.3) 1px;
         rotate: 45deg;
-      }
 
-      &-skill {
         img {
           rotate: -45deg;
           width: 100%;
           object-fit: cover;
           object-position: center;
+          cursor: pointer;
         }
       }
     }
@@ -111,15 +110,16 @@
         width: 100%;
         object-fit: cover;
         object-position: center;
+        cursor: pointer;
       }
 
-      & > div {
+      &-icon {
         width: 50px;
         padding: 0.5em;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: solid black 1px;
+        border: solid rgba(0, 0, 0, 0.3) 1px;
         rotate: 45deg;
       }
 
@@ -167,7 +167,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border: solid black 1px;
+        border: solid rgba(0, 0, 0, 0.3) 1px;
         rotate: 45deg;
 
         img {
@@ -175,6 +175,7 @@
           width: 100%;
           object-fit: cover;
           object-position: center;
+          cursor: pointer;
         }
       }
 
@@ -225,4 +226,11 @@
     rgba(12, 0, 50, 0.9) 0%,
     rgba(223, 208, 255, 0.3) 100%
   );
+}
+
+.ability-equipped,
+.grenade-equipped,
+.jump-equipped,
+.tree-equipped {
+  border: solid goldenrod 2px;
 }

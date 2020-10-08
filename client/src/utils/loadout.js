@@ -10,11 +10,10 @@ const loadout = {
   selectedClass: "",
   subClass: {
     element: "",
-    classSpecialty: {},
-    movementMode: {},
-    grenade: {},
-    super: {},
-    path: {},
+    classSpecialty: "",
+    movementMode: "",
+    grenade: "",
+    path: "",
   },
   stats: {
     mobility: 50,

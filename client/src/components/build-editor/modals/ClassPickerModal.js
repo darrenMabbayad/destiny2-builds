@@ -5,6 +5,10 @@ function ClassPickerModal({
   currentClass,
   currentSubClass,
   selectClass,
+  changeClassAbility,
+  changeJump,
+  changeGrenade,
+  changeTree,
   selectClassElement,
   toggleClassPicker,
 }) {
@@ -12,8 +16,24 @@ function ClassPickerModal({
   const [subClassList, setSubClassList] = useState(
     currentClass ? getSubClass(currentClass) : []
   );
-  const [subClassByElement, setSubClassByElement] = useState({});
   const currentElement = currentSubClass.element;
+  const [subClassByElement, setSubClassByElement] = useState(
+    currentElement ? filterSubClasses(currentElement) : {}
+  );
+  const equippedAbility = currentSubClass.classSpecialty;
+  const equippedJump = currentSubClass.movementMode;
+  const equippedGrenade = currentSubClass.grenade;
+  const equippedTree = currentSubClass.path;
+
+  function filterSubClasses(element) {
+    const list = getSubClass(currentClass);
+    for (const item of list) {
+      const subClass = item;
+      if (subClass.element === element) {
+        return subClass;
+      }
+    }
+  }
 
   function selectClassAndGetSubClasses(e) {
     const { name } = e.target;
@@ -34,6 +54,30 @@ function ClassPickerModal({
     return className;
   }
 
+  function getAbilityClassName(ability) {
+    if (equippedAbility === ability) {
+      return `class-picker-talent-grid-class-specialty-skill ability-equipped`;
+    } else return "class-picker-talent-grid-class-specialty-skill";
+  }
+
+  function getGrenadeClassName(grenade) {
+    if (equippedGrenade === grenade) {
+      return `class-picker-talent-grid-grenades-icon grenade-equipped`;
+    } else return "class-picker-talent-grid-grenades-icon";
+  }
+
+  function getJumpClassName(jump) {
+    if (equippedJump === jump) {
+      return `class-picker-talent-grid-jumps-icon jump-equipped`;
+    } else return "class-picker-talent-grid-jumps-icon";
+  }
+
+  function getTreeClassName(tree) {
+    if (equippedTree === tree) {
+      return `class-picker-talent-grid-trees-icon tree-equipped`;
+    } else return "class-picker-talent-grid-trees-icon";
+  }
+
   function selectElementandRenderTalents(e) {
     selectClassElement(e);
     const { id } = e.target;
@@ -44,10 +88,6 @@ function ClassPickerModal({
       }
     }
   }
-
-  function selectTree(tree, icon) {}
-
-  console.log(subClassList);
 
   return (
     <>
@@ -96,19 +136,27 @@ function ClassPickerModal({
           <div className="class-picker-talent-grid-skills">
             <div className="class-picker-talent-grid-class-specialty">
               {subClassByElement.classSpecialties.map((ability, index) => (
-                <div
-                  key={index}
-                  className="class-picker-talent-grid-class-specialty-skill"
-                >
-                  <img src={`http://www.bungie.net${ability.icon}`} alt="" />
+                <div key={index} className={getAbilityClassName(ability.name)}>
+                  <img
+                    src={`http://www.bungie.net${ability.icon}`}
+                    alt=""
+                    onClick={() => changeClassAbility(ability.name)}
+                  />
                 </div>
               ))}
             </div>
             <div className="class-picker-talent-grid-abilities">
               <div className="class-picker-talent-grid-grenades">
                 {subClassByElement.grenades.map((grenade, index) => (
-                  <div key={index}>
-                    <img src={`http://www.bungie.net${grenade.icon}`} alt="" />
+                  <div
+                    key={index}
+                    className={getGrenadeClassName(grenade.name)}
+                  >
+                    <img
+                      src={`http://www.bungie.net${grenade.icon}`}
+                      alt=""
+                      onClick={() => changeGrenade(grenade.name)}
+                    />
                   </div>
                 ))}
               </div>
@@ -120,8 +168,12 @@ function ClassPickerModal({
               </div>
               <div className="class-picker-talent-grid-jumps">
                 {subClassByElement.movementModes.map((jump, index) => (
-                  <div key={index}>
-                    <img src={`http://www.bungie.net${jump.icon}`} alt="" />
+                  <div key={index} className={getJumpClassName(jump.name)}>
+                    <img
+                      src={`http://www.bungie.net${jump.icon}`}
+                      alt=""
+                      onClick={() => changeJump(jump.name)}
+                    />
                   </div>
                 ))}
               </div>
@@ -130,48 +182,33 @@ function ClassPickerModal({
           <div className="class-picker-talent-grid-trees">
             <div className="class-picker-talent-grid-trees-icons-container">
               {subClassByElement.firstPath.talents.map((path, index) => (
-                <div
-                  key={index}
-                  className="class-picker-talent-grid-trees-icon"
-                >
+                <div key={index} className={getTreeClassName("top")}>
                   <img
                     src={`http://www.bungie.net${path.icon}`}
                     alt=""
-                    onClick={() =>
-                      selectTree("top", subClassByElement.firstPath.icon)
-                    }
+                    onClick={() => changeTree("top")}
                   />
                 </div>
               ))}
             </div>
             <div className="class-picker-talent-grid-trees-icons-container">
               {subClassByElement.thirdPath.talents.map((path, index) => (
-                <div
-                  key={index}
-                  className="class-picker-talent-grid-trees-icon"
-                >
+                <div key={index} className={getTreeClassName("middle")}>
                   <img
                     src={`http://www.bungie.net${path.icon}`}
                     alt=""
-                    onClick={() =>
-                      selectTree("middle", subClassByElement.thirdPath.icon)
-                    }
+                    onClick={() => changeTree("middle")}
                   />
                 </div>
               ))}
             </div>
             <div className="class-picker-talent-grid-trees-icons-container">
               {subClassByElement.secondPath.talents.map((path, index) => (
-                <div
-                  key={index}
-                  className="class-picker-talent-grid-trees-icon"
-                >
+                <div key={index} className={getTreeClassName("bottom")}>
                   <img
                     src={`http://www.bungie.net${path.icon}`}
                     alt=""
-                    onClick={() =>
-                      selectTree("bottom", subClassByElement.secondPath.icon)
-                    }
+                    onClick={() => changeTree("bottom")}
                   />
                 </div>
               ))}

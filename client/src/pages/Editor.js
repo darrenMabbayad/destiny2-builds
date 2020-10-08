@@ -170,6 +170,30 @@ function Editor() {
     setBuildToSave({ ...buildToSave, stats: newStats });
   }
 
+  function changeClassAbility(ability) {
+    const newSubClass = buildToSave.subClass;
+    newSubClass.classSpecialty = ability;
+    setBuildToSave({ ...buildToSave, subClass: newSubClass });
+  }
+
+  function changeJump(jump) {
+    const newSubClass = buildToSave.subClass;
+    newSubClass.movementMode = jump;
+    setBuildToSave({ ...buildToSave, subClass: newSubClass });
+  }
+
+  function changeGrenade(grenade) {
+    const newSubClass = buildToSave.subClass;
+    newSubClass.grenade = grenade;
+    setBuildToSave({ ...buildToSave, subClass: newSubClass });
+  }
+
+  function changeTree(tree) {
+    const newSubClass = buildToSave.subClass;
+    newSubClass.path = tree;
+    setBuildToSave({ ...buildToSave, subClass: newSubClass });
+  }
+
   function equipPerk(e, perk, weaponSlot) {
     const { parentElement } = e.target;
     const newWeapons = buildToSave.weapons;
@@ -338,6 +362,10 @@ function Editor() {
             currentClass={buildToSave.selectedClass}
             currentSubClass={buildToSave.subClass}
             selectClass={selectClass}
+            changeClassAbility={changeClassAbility}
+            changeJump={changeJump}
+            changeGrenade={changeGrenade}
+            changeTree={changeTree}
             selectClassElement={selectClassElement}
             toggleClassPicker={toggleClassPicker}
           />,
