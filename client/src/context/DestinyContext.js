@@ -14,6 +14,7 @@ function DestinyContextProvider({ children }) {
   const [plugSets, setPlugSets] = useState({});
   const [destinyStats, setDestinyStats] = useState({});
   const [sandboxPerks, setSandboxPerks] = useState({});
+  const [talentGrids, setTalentGrids] = useState({});
 
   const manifest = {
     inventoryItems,
@@ -23,6 +24,7 @@ function DestinyContextProvider({ children }) {
     plugSets,
     destinyStats,
     sandboxPerks,
+    talentGrids,
   };
 
   const itemTierRegex = /(Legendary)|(Exotic)/;
@@ -49,10 +51,13 @@ function DestinyContextProvider({ children }) {
         setPlugSets(res.data.DestinyPlugSetDefinition);
         setDestinyStats(res.data.DestinyStatDefinition);
         setSandboxPerks(res.data.DestinySandboxPerkDefinition);
+        setTalentGrids(res.data.DestinyTalentGridDefinition);
         // Log performance
         TIME_END = performance.now();
         console.log(
-          `Finished loading Destiny 2 manifest - ${TIME_END - TIME_START} ms`
+          `Finished loading Destiny 2 manifest from ${manifestUrl} - ${
+            TIME_END - TIME_START
+          } ms`
         );
       } catch (e) {
         console.log("Could not load Destiny 2 manifest...");
@@ -223,12 +228,122 @@ function DestinyContextProvider({ children }) {
     return categorizedItems;
   }
 
+  function getSubClass(selectedClass) {
+    const subclassList = [];
+    let subclassToFind = "";
+    if (selectedClass === "btn-hunter") {
+      subclassToFind = "Hunter Subclass";
+    } else if (selectedClass === "btn-warlock") {
+      subclassToFind = "Warlock Subclass";
+    } else if (selectedClass === "btn-titan") {
+      subclassToFind = "Titan Subclass";
+    }
+    for (const key in inventoryItems) {
+      if (inventoryItems[key].itemTypeDisplayName === subclassToFind) {
+        subclassList.push(inventoryItems[key]);
+      }
+    }
+
+    const subclassTalents = [];
+    subclassList.forEach(subclass => {
+      if (subclass.talentGrid.hudDamageType === 2) {
+        const arcSubClass = getTalentGrid(subclass.talentGrid.talentGridHash);
+        subclassTalents.push(arcSubClass);
+      } else if (subclass.talentGrid.hudDamageType === 3) {
+        const solarSubClass = getTalentGrid(subclass.talentGrid.talentGridHash);
+        subclassTalents.push(solarSubClass);
+      } else if (subclass.talentGrid.hudDamageType === 4) {
+        const voidSubClass = getTalentGrid(subclass.talentGrid.talentGridHash);
+        subclassTalents.push(voidSubClass);
+      }
+    });
+
+    return subclassTalents;
+  }
+
+  function getTalentGrid(hash) {
+    let subClass = {
+      classSpecialties: [],
+      movementModes: [],
+      grenades: [],
+      super: [],
+      firstPath: {
+        name: "",
+        icon: "",
+        talents: [],
+      },
+      secondPath: {
+        name: "",
+        icon: "",
+        talents: [],
+      },
+      thirdPath: {
+        name: "",
+        icon: "",
+        talents: [],
+      },
+    };
+
+    let classSpecialtiesIndexes;
+    let movementModesIndexes;
+    let grenadesIndexes;
+    let superIndexes;
+    let firstPathIndexes;
+    let secondPathIndexes;
+    let thirdPathIndexes;
+
+    talentGrids[hash].nodeCategories.forEach(category => {
+      if (category.identifier === "ClassSpecialties") {
+        classSpecialtiesIndexes = new Set([...category.nodeHashes]);
+      } else if (category.identifier === "MovementModes") {
+        movementModesIndexes = new Set([...category.nodeHashes]);
+      } else if (category.identifier === "Grenades") {
+        grenadesIndexes = new Set([...category.nodeHashes]);
+      } else if (category.identifier === "Super") {
+        superIndexes = new Set([...category.nodeHashes]);
+      } else if (category.identifier === "FirstPath") {
+        firstPathIndexes = new Set([...category.nodeHashes]);
+        subClass.firstPath.name = category.displayProperties.name;
+        subClass.firstPath.icon = category.displayProperties.icon;
+      } else if (category.identifier === "SecondPath") {
+        secondPathIndexes = new Set([...category.nodeHashes]);
+        subClass.secondPath.name = category.displayProperties.name;
+        subClass.secondPath.icon = category.displayProperties.icon;
+      } else if (category.identifier === "ThirdPath") {
+        thirdPathIndexes = new Set([...category.nodeHashes]);
+        subClass.thirdPath.name = category.displayProperties.name;
+        subClass.thirdPath.icon = category.displayProperties.icon;
+      }
+    });
+
+    talentGrids[hash].nodes.forEach((node, index) => {
+      if (classSpecialtiesIndexes.has(index)) {
+        subClass.classSpecialties.push(node.steps[0].displayProperties);
+      } else if (movementModesIndexes.has(index)) {
+        subClass.movementModes.push(node.steps[0].displayProperties);
+      } else if (grenadesIndexes.has(index)) {
+        subClass.grenades.push(node.steps[0].displayProperties);
+      } else if (superIndexes.has(index)) {
+        subClass.super = node.steps[0].displayProperties;
+      } else if (firstPathIndexes.has(index)) {
+        subClass.firstPath.talents.push(node.steps[0].displayProperties);
+      } else if (secondPathIndexes.has(index)) {
+        subClass.secondPath.talents.push(node.steps[0].displayProperties);
+      } else if (thirdPathIndexes.has(index)) {
+        subClass.thirdPath.talents.push(node.steps[0].displayProperties);
+      }
+    });
+
+    return subClass;
+  }
+
   return (
     <DestinyContext.Provider
       value={{
         manifest,
         searchResults,
         getInventoryItemsByEquipmentSlot,
+        getSubClass,
       }}
     >
       {children}
