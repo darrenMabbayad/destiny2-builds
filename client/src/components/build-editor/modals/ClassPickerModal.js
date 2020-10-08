@@ -9,15 +9,16 @@ function ClassPickerModal({
   toggleClassPicker,
 }) {
   const { getSubClass } = useContext(DestinyContext);
-  const [subClasses, setSubClasses] = useState(
+  const [subClassList, setSubClassList] = useState(
     currentClass ? getSubClass(currentClass) : []
   );
+  const [subClassByElement, setSubClassByElement] = useState({});
   const currentElement = currentSubClass.element;
 
   function selectClassAndGetSubClasses(e) {
     const { name } = e.target;
     const list = getSubClass(name);
-    setSubClasses(list);
+    setSubClassList(list);
     selectClass(e);
   }
 
@@ -32,6 +33,21 @@ function ClassPickerModal({
     }
     return className;
   }
+
+  function selectElementandRenderTalents(e) {
+    selectClassElement(e);
+    const { id } = e.target;
+    for (const item of subClassList) {
+      const subClass = item;
+      if (subClass.element === id) {
+        setSubClassByElement({ ...subClass });
+      }
+    }
+  }
+
+  function selectTree(tree, icon) {}
+
+  console.log(subClassList);
 
   return (
     <>
@@ -63,19 +79,106 @@ function ClassPickerModal({
       )}
       {currentClass && !currentElement && (
         <div className="class-picker-element-images">
-          {subClasses.map((subClass, index) => (
+          {subClassList.map((subClass, index) => (
             <div key={index} className={getElementClassName(subClass.element)}>
               <img
                 id={subClass.element}
-                src={`http://www.bungie.net/${subClass.icon}`}
+                src={`http://www.bungie.net${subClass.icon}`}
                 alt=""
-                onClick={e => selectClassElement(e)}
+                onClick={e => selectElementandRenderTalents(e)}
               />
             </div>
           ))}
         </div>
       )}
-      {currentClass && currentElement && <div>TODO</div>}
+      {currentClass && currentElement && (
+        <div className="class-picker-talent-grid">
+          <div className="class-picker-talent-grid-skills">
+            <div className="class-picker-talent-grid-class-specialty">
+              {subClassByElement.classSpecialties.map((ability, index) => (
+                <div
+                  key={index}
+                  className="class-picker-talent-grid-class-specialty-skill"
+                >
+                  <img src={`http://www.bungie.net${ability.icon}`} alt="" />
+                </div>
+              ))}
+            </div>
+            <div className="class-picker-talent-grid-abilities">
+              <div className="class-picker-talent-grid-grenades">
+                {subClassByElement.grenades.map((grenade, index) => (
+                  <div key={index}>
+                    <img src={`http://www.bungie.net${grenade.icon}`} alt="" />
+                  </div>
+                ))}
+              </div>
+              <div className="class-picker-talent-grid-class-icon">
+                <img
+                  src={`http://www.bungie.net${subClassByElement.secondaryIcon}`}
+                  alt=""
+                />
+              </div>
+              <div className="class-picker-talent-grid-jumps">
+                {subClassByElement.movementModes.map((jump, index) => (
+                  <div key={index}>
+                    <img src={`http://www.bungie.net${jump.icon}`} alt="" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="class-picker-talent-grid-trees">
+            <div className="class-picker-talent-grid-trees-icons-container">
+              {subClassByElement.firstPath.talents.map((path, index) => (
+                <div
+                  key={index}
+                  className="class-picker-talent-grid-trees-icon"
+                >
+                  <img
+                    src={`http://www.bungie.net${path.icon}`}
+                    alt=""
+                    onClick={() =>
+                      selectTree("top", subClassByElement.firstPath.icon)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="class-picker-talent-grid-trees-icons-container">
+              {subClassByElement.thirdPath.talents.map((path, index) => (
+                <div
+                  key={index}
+                  className="class-picker-talent-grid-trees-icon"
+                >
+                  <img
+                    src={`http://www.bungie.net${path.icon}`}
+                    alt=""
+                    onClick={() =>
+                      selectTree("middle", subClassByElement.thirdPath.icon)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="class-picker-talent-grid-trees-icons-container">
+              {subClassByElement.secondPath.talents.map((path, index) => (
+                <div
+                  key={index}
+                  className="class-picker-talent-grid-trees-icon"
+                >
+                  <img
+                    src={`http://www.bungie.net${path.icon}`}
+                    alt=""
+                    onClick={() =>
+                      selectTree("bottom", subClassByElement.secondPath.icon)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

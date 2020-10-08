@@ -251,28 +251,34 @@ function DestinyContextProvider({ children }) {
     subclassList.forEach(subclass => {
       if (subclass.talentGrid.hudDamageType === 2) {
         const subClassIcon = subclass.secondaryIcon;
+        const uiIcon = subclass.displayProperties.icon;
         const element = "arc";
         const arcSubClass = getTalentGrid(
           subclass.talentGrid.talentGridHash,
           subClassIcon,
+          uiIcon,
           element
         );
         subclassTalents.push(arcSubClass);
       } else if (subclass.talentGrid.hudDamageType === 3) {
         const subClassIcon = subclass.secondaryIcon;
+        const uiIcon = subclass.displayProperties.icon;
         const element = "solar";
         const solarSubClass = getTalentGrid(
           subclass.talentGrid.talentGridHash,
           subClassIcon,
+          uiIcon,
           element
         );
         subclassTalents.push(solarSubClass);
       } else if (subclass.talentGrid.hudDamageType === 4) {
         const subClassIcon = subclass.secondaryIcon;
+        const uiIcon = subclass.displayProperties.icon;
         const element = "void";
         const voidSubClass = getTalentGrid(
           subclass.talentGrid.talentGridHash,
           subClassIcon,
+          uiIcon,
           element
         );
         subclassTalents.push(voidSubClass);
@@ -282,9 +288,10 @@ function DestinyContextProvider({ children }) {
     return subclassTalents;
   }
 
-  function getTalentGrid(hash, subClassIcon, element) {
+  function getTalentGrid(hash, subClassIcon, uiIcon, element) {
     let subClass = {
       icon: subClassIcon,
+      secondaryIcon: uiIcon,
       element: element,
       classSpecialties: [],
       movementModes: [],
