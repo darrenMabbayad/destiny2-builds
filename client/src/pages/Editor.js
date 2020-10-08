@@ -77,6 +77,13 @@ function Editor() {
     }
   }
 
+  function selectClassElement(e) {
+    const { id } = e.target;
+    const newSubClass = buildToSave.subClass;
+    newSubClass.element = id;
+    setBuildToSave({ ...buildToSave, subClass: newSubClass });
+  }
+
   // ------------- START: Modal Toggles -------------- //
   function toggleClassPicker(e) {
     e.stopPropagation();
@@ -328,7 +335,10 @@ function Editor() {
       {showClassPicker &&
         createPortal(
           <ClassPickerModal
+            currentClass={buildToSave.selectedClass}
+            currentSubClass={buildToSave.subClass}
             selectClass={selectClass}
+            selectClassElement={selectClassElement}
             toggleClassPicker={toggleClassPicker}
           />,
           document.getElementById("modal-root")

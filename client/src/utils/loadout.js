@@ -8,6 +8,14 @@ const loadout = {
   name: "",
   description: "",
   selectedClass: "",
+  subClass: {
+    element: "",
+    classSpecialty: {},
+    movementMode: {},
+    grenade: {},
+    super: {},
+    path: {},
+  },
   stats: {
     mobility: 50,
     resilience: 50,

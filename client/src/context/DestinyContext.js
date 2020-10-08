@@ -231,11 +231,14 @@ function DestinyContextProvider({ children }) {
   function getSubClass(selectedClass) {
     const subclassList = [];
     let subclassToFind = "";
-    if (selectedClass === "btn-hunter") {
+    const hunterRegex = /(hunter)/i;
+    const warlockRegex = /(warlock)/i;
+    const titanRegex = /(titan)/i;
+    if (hunterRegex.test(selectedClass)) {
       subclassToFind = "Hunter Subclass";
-    } else if (selectedClass === "btn-warlock") {
+    } else if (warlockRegex.test(selectedClass)) {
       subclassToFind = "Warlock Subclass";
-    } else if (selectedClass === "btn-titan") {
+    } else if (titanRegex.test(selectedClass)) {
       subclassToFind = "Titan Subclass";
     }
     for (const key in inventoryItems) {
@@ -247,13 +250,31 @@ function DestinyContextProvider({ children }) {
     const subclassTalents = [];
     subclassList.forEach(subclass => {
       if (subclass.talentGrid.hudDamageType === 2) {
-        const arcSubClass = getTalentGrid(subclass.talentGrid.talentGridHash);
+        const subClassIcon = subclass.secondaryIcon;
+        const element = "arc";
+        const arcSubClass = getTalentGrid(
+          subclass.talentGrid.talentGridHash,
+          subClassIcon,
+          element
+        );
         subclassTalents.push(arcSubClass);
       } else if (subclass.talentGrid.hudDamageType === 3) {
-        const solarSubClass = getTalentGrid(subclass.talentGrid.talentGridHash);
+        const subClassIcon = subclass.secondaryIcon;
+        const element = "solar";
+        const solarSubClass = getTalentGrid(
+          subclass.talentGrid.talentGridHash,
+          subClassIcon,
+          element
+        );
         subclassTalents.push(solarSubClass);
       } else if (subclass.talentGrid.hudDamageType === 4) {
-        const voidSubClass = getTalentGrid(subclass.talentGrid.talentGridHash);
+        const subClassIcon = subclass.secondaryIcon;
+        const element = "void";
+        const voidSubClass = getTalentGrid(
+          subclass.talentGrid.talentGridHash,
+          subClassIcon,
+          element
+        );
         subclassTalents.push(voidSubClass);
       }
     });
@@ -261,8 +282,10 @@ function DestinyContextProvider({ children }) {
     return subclassTalents;
   }
 
-  function getTalentGrid(hash) {
+  function getTalentGrid(hash, subClassIcon, element) {
     let subClass = {
+      icon: subClassIcon,
+      element: element,
       classSpecialties: [],
       movementModes: [],
       grenades: [],
