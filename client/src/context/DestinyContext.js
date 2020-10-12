@@ -15,6 +15,7 @@ function DestinyContextProvider({ children }) {
   const [destinyStats, setDestinyStats] = useState({});
   const [sandboxPerks, setSandboxPerks] = useState({});
   const [talentGrids, setTalentGrids] = useState({});
+  const [collectibles, setCollectibles] = useState({})
 
   const manifest = {
     inventoryItems,
@@ -25,6 +26,7 @@ function DestinyContextProvider({ children }) {
     destinyStats,
     sandboxPerks,
     talentGrids,
+    collectibles
   };
 
   const itemTierRegex = /(Legendary)|(Exotic)/;
@@ -52,6 +54,7 @@ function DestinyContextProvider({ children }) {
         setDestinyStats(res.data.DestinyStatDefinition);
         setSandboxPerks(res.data.DestinySandboxPerkDefinition);
         setTalentGrids(res.data.DestinyTalentGridDefinition);
+        setCollectibles(res.data.DestinyCollectibleDefinition)
         // Log performance
         TIME_END = performance.now();
         console.log(

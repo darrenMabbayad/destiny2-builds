@@ -10,22 +10,102 @@ function ItemSearchModal({
   changeItem,
 }) {
   const [searchResults, setSearchResults] = useState([]);
-  const { searchResults: preparedList } = useContext(DestinyContext);
+  const { manifest, searchResults: preparedList } = useContext(DestinyContext);
   const weaponRegex = /(kinetic)|(special)|(power)/;
   const armorRegex = /(helmet)|(gloves)|(chest)|(boots)|(classItem)/;
+  const filterRegex = /\w+:\w+/
+  
+  function checkFilterString(string) {
+    let filterString = ''
+    const sourceRegex = /(source):\w+/i // check for source:word
+    const isRegex = /(is):\w+/i // check for is:word
+    if(sourceRegex.test(string)) {
+      filterString = string.replace(/^(.*?):*$/, '$1').split(':')
+      filterString.shift()
+      filterString = filterString.join('')
+      filterItemsBySource(filterString)
+    } else if(isRegex.test(string) && weaponRegex.test(itemToChange)) {
+      filterString = string.replace(/^(.*?):*$/, '$1').split(':')
+      filterString.shift()
+      filterString = filterString.join('')
+      filterWeaponsByType(filterString)
+    } else return false
+  }
 
   function searchItemFromPreparedList(e, query) {
     e.preventDefault();
+    if (filterRegex.test(query)) {
+      checkFilterString(query)
+      return 
+    }
     let queryRegex = new RegExp(query, "i");
     let result = [];
-    for (const property in preparedList) {
-      for (const element of preparedList[property]) {
+    for(const property in preparedList) {
+      for(const element of preparedList[property]) {
         if (queryRegex.test(element.displayProperties.name)) {
           result.push(element);
         }
       }
     }
     setSearchResults(result);
+  }
+
+  function filterItemsBySource(filter) {
+      const filterString = filter
+      const itemList = new Set()
+      for(const key in manifest.collectibles) {
+        if(manifest.collectibles[key].sourceString) {
+          if(manifest.collectibles[key].sourceString.toLowerCase().includes(filterString)) {
+            itemList.add(manifest.collectibles[key].displayProperties.name)
+          }
+        }
+      }
+      let result = []
+      for(const property in preparedList) {
+        for(const element of preparedList[property]) {
+          if (itemList.has(element.displayProperties.name)) {
+            result.push(element)
+          }
+        }
+      }
+      setSearchResults(result)
+  }
+
+  function filterWeaponsByType(filter) {
+    const filterString = filter
+    if (filterString.toLowerCase().includes('scout')) {
+      setSearchResults(preparedList['scoutRifle'])
+    } else if (filterString.toLowerCase().includes('auto')) {
+      setSearchResults(preparedList['autoRifle'])
+    } else if (filterString.toLowerCase().includes('pulse')) {
+      setSearchResults(preparedList['pulseRifle'])
+    } else if (filterString.toLowerCase().includes('fusion')) {
+      setSearchResults(preparedList['fusionRifle'])
+    } else if (filterString.toLowerCase().includes('linear')) {
+      setSearchResults(preparedList['linearFusionRifles'])
+    } else if (filterString.toLowerCase().includes('sniper')) {
+      setSearchResults(preparedList['sniperRifle'])
+    } else if (filterString.toLowerCase().includes('hand cannon')) {
+      setSearchResults(preparedList['handCannon'])
+    } else if (filterString.toLowerCase().includes('shotgun')) {
+      setSearchResults(preparedList['shotgun'])
+    } else if (filterString.toLowerCase().includes('sidearm')) {
+      setSearchResults(preparedList['sidearm'])
+    } else if (filterString.toLowerCase().includes('machine gun')) {
+      setSearchResults(preparedList['machineGun'])
+    } else if (filterString.toLowerCase().includes('rocket')) {
+      setSearchResults(preparedList['rocketLauncher']) 
+    } else if (filterString.toLowerCase().includes('grenade')) {
+      setSearchResults(preparedList['grenadeLaunchers'])
+    } else if (filterString.toLowerCase().includes('sword')) {
+      setSearchResults(preparedList['sword'])
+    } else if (filterString.toLowerCase().includes('smg')) {
+      setSearchResults(preparedList['submachineGuns'])
+    } else if (filterString.toLowerCase().includes('trace')) {
+      setSearchResults(preparedList['traceRifles'])
+    } else if (filterString.toLowerCase().includes('bow')) {
+      setSearchResults(preparedList['bows'])
+    }
   }
 
   function closeModal(e) {
