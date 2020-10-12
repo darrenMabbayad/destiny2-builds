@@ -59,7 +59,7 @@ function getWeaponIntrinsicTrait(manifest, item) {
   const intrinsicTrait = [];
   plugList.forEach(plug => {
     intrinsicTrait.push(
-      manifest.inventoryItems[plug.singleInitialItemHash].displayProperties
+      {displayProperties: manifest.inventoryItems[plug.singleInitialItemHash].displayProperties}
     );
   });
   return intrinsicTrait;
@@ -88,7 +88,7 @@ function getWeaponPerks(manifest, item) {
   const specificSlotPerks = [];
   perkSlotList.forEach(slot => {
     const perks = slot.map(entry => {
-      return manifest.inventoryItems[entry.plugItemHash].displayProperties;
+      return {displayProperties: manifest.inventoryItems[entry.plugItemHash].displayProperties};
     });
     specificSlotPerks.push(perks);
   });
@@ -170,10 +170,14 @@ function getWeaponModSocket(manifest, item) {
             };
           }
         }
+      } else {
+        modSandboxPerk = {
+          ...mod.displayProperties
+        }
       }
       const modToPush = {
-        ...modDisplayProperties,
-        ...modSandboxPerk,
+        displayProperties: modDisplayProperties,
+        sandboxPerk: modSandboxPerk,
       };
       return modToPush;
     });
@@ -252,7 +256,7 @@ function filterMasterworksList(manifest, list, item) {
     });
   } else return null;
   const newMasterworkList = filteredMasterworks.map(
-    masterwork => masterwork.displayProperties
+    masterwork => {return {displayProperties: masterwork.displayProperties}}
   );
   return newMasterworkList;
 }
@@ -312,7 +316,8 @@ function getArmorMods(manifest, item) {
     slot.forEach(mod => {
       energyType = checkModEnergyType(mod);
       const modToAdd = {
-        ...mod.displayProperties,
+        displayProperties: mod.displayProperties,
+        sandboxPerk: mod.perks.length !== 0 ? manifest.sandboxPerks[mod.perks[0].perkHash].displayProperties : mod.displayProperties,
         energyCost:
           mod.plug.hasOwnProperty("energyCost") &&
           mod.plug.energyCost.energyCost,

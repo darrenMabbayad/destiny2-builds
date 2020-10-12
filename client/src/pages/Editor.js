@@ -139,6 +139,7 @@ function Editor() {
       setShowArmorDetails(prev => !prev);
     }
   }
+
   // ------------- END: Modal Toggles -------------- //
 
   function changeItem(e, item, itemType) {
@@ -198,9 +199,9 @@ function Editor() {
     const { parentElement } = e.target;
     const newWeapons = buildToSave.weapons;
     const perkToEquip = {
-      name: perk.name,
-      description: perk.description,
-      icon: perk.icon,
+      name: perk.displayProperties.name,
+      description: perk.displayProperties.description,
+      icon: perk.displayProperties.icon,
     };
     const emptyPerkSlot = {
       name: "",
@@ -219,9 +220,9 @@ function Editor() {
   function equipMod(mod, weaponSlot) {
     const newWeapons = buildToSave.weapons;
     const modToEquip = {
-      name: mod.name,
-      description: mod.description,
-      icon: mod.icon,
+      name: mod.displayProperties.name,
+      description: mod.displayProperties.description,
+      icon: mod.displayProperties.icon,
     };
     newWeapons[weaponSlot].mod = modToEquip;
     setBuildToSave({ ...buildToSave, weapons: newWeapons });
@@ -230,9 +231,9 @@ function Editor() {
   function equipMasterwork(masterwork, weaponSlot) {
     const newWeapons = buildToSave.weapons;
     const masterworkToEquip = {
-      name: masterwork.name,
-      description: masterwork.description,
-      icon: masterwork.icon,
+      name: masterwork.displayProperties.name,
+      description: masterwork.displayProperties.description,
+      icon: masterwork.displayProperties.icon,
     };
     newWeapons[weaponSlot].masterwork = masterworkToEquip;
     setBuildToSave({ ...buildToSave, weapons: newWeapons });
@@ -243,9 +244,9 @@ function Editor() {
       const { parentElement } = e.target;
       const newArmor = buildToSave.armor;
       const modToEquip = {
-        name: mod.name,
-        description: mod.description,
-        icon: mod.icon,
+        name: mod.displayProperties.name,
+        description: mod.displayProperties.description,
+        icon: mod.displayProperties.icon,
         energyCost: mod.energyCost,
       };
       const emptyModSlot = {

@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
 import { Link } from "react-router-dom";
+import QuickDetailsModal from "./QuickDetailsModal";
 
 function ArmorDetailsModal({
   toggleItemInfo,
@@ -10,6 +11,9 @@ function ArmorDetailsModal({
   currentEnergyCost,
 }) {
   const classItemRegex = /(Hunter Cloak)|(Warlock Bond)|(Titan Mark)/;
+  const [quickHoverDetails, setQuickHoverDetails] = useState({})
+  const [showQuickDetails, setShowQuickDetails] = useState(false)
+  const [infoType, setInfoType] = useState('')
   let armorSlot = "";
   let equippedMods = [];
   let equippedEnergyType = "";
@@ -75,6 +79,16 @@ function ArmorDetailsModal({
     return energyBars;
   }
 
+  function openQuickDetails(itemInfo, type) {
+    setInfoType(type)
+    setQuickHoverDetails(itemInfo)
+    setShowQuickDetails(true)
+  }
+
+  function closeQuickDetails() {
+    setShowQuickDetails(false)
+  }
+
   return (
     <>
       <div
@@ -116,40 +130,48 @@ function ArmorDetailsModal({
             {modSlot.any.map((mod, index) => (
               <img
                 key={index}
-                src={`https://www.bungie.net${mod.icon}`}
-                className={getModClassName(mod.name, slotIndex)}
+                src={`https://www.bungie.net${mod.displayProperties.icon}`}
+                className={getModClassName(mod.displayProperties.name, slotIndex)}
                 alt=""
                 onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
+                onMouseEnter={() => openQuickDetails(mod, 'armorMod')}
+                    onMouseLeave={() => closeQuickDetails()}
               />
             ))}
             {equippedEnergyType === "arc" &&
               modSlot.arc.map((mod, index) => (
                 <img
                   key={index}
-                  src={`https://www.bungie.net${mod.icon}`}
-                  className={getModClassName(mod.name, slotIndex)}
+                  src={`https://www.bungie.net${mod.displayProperties.icon}`}
+                  className={getModClassName(mod.displayProperties.name, slotIndex)}
                   alt=""
                   onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
+                  onMouseEnter={() => openQuickDetails(mod, 'armorMod')}
+                    onMouseLeave={() => closeQuickDetails()}
                 />
               ))}
             {equippedEnergyType === "solar" &&
               modSlot.solar.map((mod, index) => (
                 <img
                   key={index}
-                  src={`https://www.bungie.net${mod.icon}`}
-                  className={getModClassName(mod.name, slotIndex)}
+                  src={`https://www.bungie.net${mod.displayProperties.icon}`}
+                  className={getModClassName(mod.displayProperties.name, slotIndex)}
                   alt=""
                   onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
+                  onMouseEnter={() => openQuickDetails(mod, 'armorMod')}
+                    onMouseLeave={() => closeQuickDetails()}
                 />
               ))}
             {equippedEnergyType === "void" &&
               modSlot.void.map((mod, index) => (
                 <img
                   key={index}
-                  src={`https://www.bungie.net${mod.icon}`}
-                  className={getModClassName(mod.name, slotIndex)}
+                  src={`https://www.bungie.net${mod.displayProperties.icon}`}
+                  className={getModClassName(mod.displayProperties.name, slotIndex)}
                   alt=""
                   onClick={e => equipArmorMod(e, mod, armorSlot, slotIndex)}
+                  onMouseEnter={() => openQuickDetails(mod, 'armorMod')}
+                    onMouseLeave={() => closeQuickDetails()}
                 />
               ))}
           </div>
@@ -173,6 +195,7 @@ function ArmorDetailsModal({
           </div>
         </div>
       </div>
+      {showQuickDetails && <QuickDetailsModal details={quickHoverDetails} infoType={infoType}/>}
     </>
   );
 }

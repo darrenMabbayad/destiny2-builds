@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useState} from "react";
+import QuickDetailsModal from './QuickDetailsModal'
 
 function WeaponDetailsModal({
   toggleItemInfo,
@@ -8,6 +9,9 @@ function WeaponDetailsModal({
   equipMod,
   equipMasterwork,
 }) {
+  const [quickHoverDetails, setQuickHoverDetails] = useState({})
+  const [showQuickDetails, setShowQuickDetails] = useState(false)
+  const [infoType, setInfoType] = useState('')
   const generalStatRegex = /(Impact)|(Range)|(Stability)|(Handling)|(Reload Speed)/;
   const hiddenStatRegex = /(Aim Assistance)|(Inventory Size)|(Zoom)|(Recoil Direction)/;
   let stats = {
@@ -63,6 +67,16 @@ function WeaponDetailsModal({
     else return null;
   }
 
+  function openQuickDetails(itemInfo, type) {
+    setInfoType(type)
+    setQuickHoverDetails(itemInfo)
+    setShowQuickDetails(true)
+  }
+
+  function closeQuickDetails() {
+    setShowQuickDetails(false)
+  }
+
   return (
     <>
       <div
@@ -78,8 +92,10 @@ function WeaponDetailsModal({
           </div>
           <div className="weapon-detail-modal-intrinsic">
             <img
-              src={`https://www.bungie.net${details.intrinsicTrait[0].icon}`}
+              src={`https://www.bungie.net${details.intrinsicTrait[0].displayProperties.icon}`}
               alt=""
+              onMouseEnter={e => openQuickDetails(details.intrinsicTrait[0], 'weaponIntrinsic')}
+              onMouseLeave={() => closeQuickDetails()}
             />
           </div>
         </div>
@@ -127,10 +143,12 @@ function WeaponDetailsModal({
                   <img
                     key={index}
                     id={perk.name}
-                    className={getPerkClassName(perk.name, slotIndex)}
-                    src={`https://www.bungie.net${perk.icon}`}
+                    className={getPerkClassName(perk.displayProperties.name, slotIndex)}
+                    src={`https://www.bungie.net${perk.displayProperties.icon}`}
                     alt=""
                     onClick={e => equipPerk(e, perk, weaponSlot)}
+                    onMouseEnter={e => openQuickDetails(perk, 'weaponPerk')}
+                    onMouseLeave={() => closeQuickDetails()}
                   />
                 ))}
               </div>
@@ -143,10 +161,12 @@ function WeaponDetailsModal({
               <img
                 key={index}
                 id={mod.name}
-                className={getModClassName(mod.name)}
-                src={`https://www.bungie.net${mod.icon}`}
+                className={getModClassName(mod.displayProperties.name)}
+                src={`https://www.bungie.net${mod.displayProperties.icon}`}
                 alt=""
                 onClick={() => equipMod(mod, weaponSlot)}
+                onMouseEnter={e => openQuickDetails(mod, 'weaponMod')}
+                onMouseLeave={() => closeQuickDetails()}
               />
             ))}
           </div>
@@ -155,15 +175,18 @@ function WeaponDetailsModal({
               <img
                 key={index}
                 id={masterwork.name}
-                className={getMasterworkClassName(masterwork)}
-                src={`https://www.bungie.net${masterwork.icon}`}
+                className={getMasterworkClassName(masterwork.displayProperties)}
+                src={`https://www.bungie.net${masterwork.displayProperties.icon}`}
                 alt=""
                 onClick={() => equipMasterwork(masterwork, weaponSlot)}
+                onMouseEnter={e => openQuickDetails(masterwork, 'weaponMasterwork')}
+                onMouseLeave={() => closeQuickDetails()}
               />
             ))}
           </div>
         </div>
       </div>
+      {showQuickDetails && <QuickDetailsModal details={quickHoverDetails} infoType={infoType}/>}
     </>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { DestinyContext } from "../../../context/DestinyContext";
+import QuickDetailsModal from "./QuickDetailsModal";
 
 function ClassPickerModal({
   currentClass,
@@ -16,6 +17,9 @@ function ClassPickerModal({
   const [subClassList, setSubClassList] = useState(
     currentClass ? getSubClass(currentClass) : []
   );
+  const [quickHoverDetails, setQuickHoverDetails] = useState({})
+  const [showQuickDetails, setShowQuickDetails] = useState(false)
+  const [infoType, setInfoType] = useState('')
   const currentElement = currentSubClass.element;
   const [subClassByElement, setSubClassByElement] = useState(
     currentElement ? filterSubClasses(currentElement) : {}
@@ -89,6 +93,16 @@ function ClassPickerModal({
     }
   }
 
+  function openQuickDetails(itemInfo, type) {
+    setInfoType(type)
+    setQuickHoverDetails(itemInfo)
+    setShowQuickDetails(true)
+  }
+
+  function closeQuickDetails() {
+    setShowQuickDetails(false)
+  }
+
   return (
     <>
       <div
@@ -136,11 +150,13 @@ function ClassPickerModal({
           <div className="class-picker-talent-grid-skills">
             <div className="class-picker-talent-grid-class-specialty">
               {subClassByElement.classSpecialties.map((ability, index) => (
-                <div key={index} className={getAbilityClassName(ability.name)}>
+                <div key={index} className={getAbilityClassName(ability.displayProperties.name)}>
                   <img
-                    src={`http://www.bungie.net${ability.icon}`}
+                    src={`http://www.bungie.net${ability.displayProperties.icon}`}
                     alt=""
-                    onClick={() => changeClassAbility(ability.name)}
+                    onClick={() => changeClassAbility(ability.displayProperties.name)}
+                    onMouseEnter={() => openQuickDetails(ability, 'subClassTalent')}
+                    onMouseLeave={() => closeQuickDetails()}
                   />
                 </div>
               ))}
@@ -150,12 +166,14 @@ function ClassPickerModal({
                 {subClassByElement.grenades.map((grenade, index) => (
                   <div
                     key={index}
-                    className={getGrenadeClassName(grenade.name)}
+                    className={getGrenadeClassName(grenade.displayProperties.name)}
                   >
                     <img
-                      src={`http://www.bungie.net${grenade.icon}`}
+                      src={`http://www.bungie.net${grenade.displayProperties.icon}`}
                       alt=""
-                      onClick={() => changeGrenade(grenade.name)}
+                      onClick={() => changeGrenade(grenade.displayProperties.name)}
+                      onMouseEnter={() => openQuickDetails(grenade, 'subClassTalent')}
+                      onMouseLeave={() => closeQuickDetails()}
                     />
                   </div>
                 ))}
@@ -168,11 +186,13 @@ function ClassPickerModal({
               </div>
               <div className="class-picker-talent-grid-jumps">
                 {subClassByElement.movementModes.map((jump, index) => (
-                  <div key={index} className={getJumpClassName(jump.name)}>
+                  <div key={index} className={getJumpClassName(jump.displayProperties.name)}>
                     <img
-                      src={`http://www.bungie.net${jump.icon}`}
+                      src={`http://www.bungie.net${jump.displayProperties.icon}`}
                       alt=""
-                      onClick={() => changeJump(jump.name)}
+                      onClick={() => changeJump(jump.displayProperties.name)}
+                      onMouseEnter={() => openQuickDetails(jump, 'subClassTalent')}
+                      onMouseLeave={() => closeQuickDetails()}
                     />
                   </div>
                 ))}
@@ -184,9 +204,11 @@ function ClassPickerModal({
               {subClassByElement.firstPath.talents.map((path, index) => (
                 <div key={index} className={getTreeClassName("top")}>
                   <img
-                    src={`http://www.bungie.net${path.icon}`}
+                    src={`http://www.bungie.net${path.displayProperties.icon}`}
                     alt=""
                     onClick={() => changeTree("top")}
+                    onMouseEnter={() => openQuickDetails(path, 'subClassTalent')}
+                    onMouseLeave={() => closeQuickDetails()}
                   />
                 </div>
               ))}
@@ -195,9 +217,11 @@ function ClassPickerModal({
               {subClassByElement.thirdPath.talents.map((path, index) => (
                 <div key={index} className={getTreeClassName("middle")}>
                   <img
-                    src={`http://www.bungie.net${path.icon}`}
+                    src={`http://www.bungie.net${path.displayProperties.icon}`}
                     alt=""
                     onClick={() => changeTree("middle")}
+                    onMouseEnter={() => openQuickDetails(path, 'subClassTalent')}
+                    onMouseLeave={() => closeQuickDetails()}
                   />
                 </div>
               ))}
@@ -206,9 +230,11 @@ function ClassPickerModal({
               {subClassByElement.secondPath.talents.map((path, index) => (
                 <div key={index} className={getTreeClassName("bottom")}>
                   <img
-                    src={`http://www.bungie.net${path.icon}`}
+                    src={`http://www.bungie.net${path.displayProperties.icon}`}
                     alt=""
                     onClick={() => changeTree("bottom")}
+                    onMouseEnter={() => openQuickDetails(path, 'subClassTalent')}
+                    onMouseLeave={() => closeQuickDetails()}
                   />
                 </div>
               ))}
@@ -216,6 +242,7 @@ function ClassPickerModal({
           </div>
         </div>
       )}
+      {showQuickDetails && <QuickDetailsModal details={quickHoverDetails} infoType={infoType}/>}
     </>
   );
 }

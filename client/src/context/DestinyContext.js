@@ -359,22 +359,21 @@ function DestinyContextProvider({ children }) {
 
     talentGrids[hash].nodes.forEach((node, index) => {
       if (classSpecialtiesIndexes.has(index)) {
-        subClass.classSpecialties.push(node.steps[0].displayProperties);
+        subClass.classSpecialties.push({displayProperties: node.steps[0].displayProperties});
       } else if (movementModesIndexes.has(index)) {
-        subClass.movementModes.push(node.steps[0].displayProperties);
+        subClass.movementModes.push({displayProperties: node.steps[0].displayProperties});
       } else if (grenadesIndexes.has(index)) {
-        subClass.grenades.push(node.steps[0].displayProperties);
+        subClass.grenades.push({displayProperties: node.steps[0].displayProperties});
       } else if (superIndexes.has(index)) {
-        subClass.super = node.steps[0].displayProperties;
+        subClass.super = {displayProperties: node.steps[0].displayProperties};
       } else if (firstPathIndexes.has(index)) {
-        subClass.firstPath.talents.push(node.steps[0].displayProperties);
+        subClass.firstPath.talents.push({displayProperties: node.steps[0].displayProperties});
       } else if (secondPathIndexes.has(index)) {
-        subClass.secondPath.talents.push(node.steps[0].displayProperties);
+        subClass.secondPath.talents.push({displayProperties: node.steps[0].displayProperties});
       } else if (thirdPathIndexes.has(index)) {
-        subClass.thirdPath.talents.push(node.steps[0].displayProperties);
+        subClass.thirdPath.talents.push({displayProperties: node.steps[0].displayProperties});
       }
     });
-
     return subClass;
   }
 

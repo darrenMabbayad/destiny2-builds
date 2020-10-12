@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { DestinyContext } from "../../../context/DestinyContext";
 import FormInput from "../FormInput";
+import QuickDetailsModal from "./QuickDetailsModal";
 
 function ItemSearchModal({
   toggleItemSearch,
@@ -8,8 +9,12 @@ function ItemSearchModal({
   handleChange,
   itemToChange,
   changeItem,
+  toggleQuickDetails
 }) {
   const [searchResults, setSearchResults] = useState([]);
+  const [quickHoverDetails, setQuickHoverDetails] = useState({})
+  const [showQuickDetails, setShowQuickDetails] = useState(false)
+  const [infoType, setInfoType] = useState('')
   const { manifest, searchResults: preparedList } = useContext(DestinyContext);
   const weaponRegex = /(kinetic)|(special)|(power)/;
   const armorRegex = /(helmet)|(gloves)|(chest)|(boots)|(classItem)/;
@@ -137,6 +142,16 @@ function ItemSearchModal({
     closeModal(e);
   }
 
+  function openQuickDetails(itemInfo, type) {
+    setInfoType(type)
+    setQuickHoverDetails(itemInfo)
+    setShowQuickDetails(true)
+  }
+
+  function closeQuickDetails() {
+    setShowQuickDetails(false)
+  }
+
   return (
     <>
       <div className="item-search-overlay" onClick={e => closeModal(e)} />
@@ -162,12 +177,15 @@ function ItemSearchModal({
                   src={`http://www.bungie.net/${item.displayProperties.icon}`}
                   alt=""
                   onClick={e => changeItemAndCloseModal(e, item)}
+                  onMouseEnter={e => openQuickDetails(item, 'itemSearch')}
+                  onMouseLeave={() => closeQuickDetails()}
                 />
               </div>
             ))}
           </div>
         )}
       </div>
+      {showQuickDetails && <QuickDetailsModal details={quickHoverDetails} infoType={infoType}/>}
     </>
   );
 }
