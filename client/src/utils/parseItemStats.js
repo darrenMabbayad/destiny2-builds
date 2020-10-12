@@ -145,9 +145,7 @@ function getWeaponModSocket(manifest, item) {
       } else if (catalystRegex.test(socketType)) {
         // this only applies to exotic weapons
         // push the empty mod socket
-        modSockets.mods.push(
-          manifest.inventoryItems[entry.singleInitialItemHash].displayProperties
-        );
+        modSockets.mods = manifest.inventoryItems[entry.singleInitialItemHash].displayProperties
       }
     }
   }
@@ -183,7 +181,11 @@ function getWeaponModSocket(manifest, item) {
     });
   } else {
     // only applies to exotic weapons
-    equippableMods = modSockets.mods;
+    const modToPush = {
+      displayProperties: modSockets.mods,
+      sandboxPerk: modSockets.mods
+    };
+    equippableMods.push(modToPush)
   }
   let masterworkList = [];
   if (modSockets.masterwork.length > 1) {
@@ -203,6 +205,7 @@ function getWeaponModSocket(manifest, item) {
     masterworkList,
     item
   );
+  console.log(equippableMods)
   return { equippableMods, masterworkChoices };
 }
 
